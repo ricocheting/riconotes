@@ -35,7 +35,7 @@ type Response struct {
 	Payload     interface{} `json:"payload,omitempty"`     // if we need to return an object. like the updated object on POST. turn it into JSON before assignint it here
 }
 
-func (s *Server) returnError(c *gin.Context, httpCode int, message string, description string) {
+func (sv *Server) returnError(c *gin.Context, httpCode int, message string, description string) {
 	out := Response{
 		Code:        httpCode,
 		Status:      "error",

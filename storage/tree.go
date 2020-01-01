@@ -1,6 +1,23 @@
 package storage
 
+import (
+	"encoding/json"
+	"io/ioutil"
+)
+
 func (st *Store) loadTree() error {
+
+	// read file
+	data, err := ioutil.ReadFile(st.cachePath + TREEFILE)
+	if err != nil {
+		return err
+	}
+
+	// unmarshall it into Store
+	err = json.Unmarshal(data, &st.tree)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

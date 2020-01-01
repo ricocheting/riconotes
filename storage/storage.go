@@ -1,6 +1,6 @@
 package storage
 
-type Storage struct {
+type Store struct {
 	tree      []*Node
 	settings  map[string]string
 	cachePath string
@@ -13,11 +13,11 @@ type Node struct {
 }
 
 // New instance of Server. Starts bolt
-func New(cachePath string) (*Storage, error) {
+func New(cachePath string) (*Store, error) {
 
 	// load the tree and the settings from the flat files
 
-	st := &Storage{
+	st := &Store{
 		cachePath: cachePath,
 	}
 
@@ -33,7 +33,7 @@ func New(cachePath string) (*Storage, error) {
 
 }
 
-func (st *Storage) loadSettings() error {
+func (st *Store) loadSettings() error {
 
 	return nil
 }

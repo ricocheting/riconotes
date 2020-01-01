@@ -1,17 +1,17 @@
 package storage
 
-func (st *Storage) Insert(n *Node) {
+func (st *Store) Insert(n *Node) {
 
 }
 
-func (st *Storage) Delete() {
+func (st *Store) Delete() {
 
 }
 
-func (st *Storage) Update() {
+func (st *Store) Update() {
 
 }
 
-func (st *Storage) Load() {
+func (st *Store) Load() {
 
 }

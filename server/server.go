@@ -7,23 +7,23 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/ricocheting/riconotes/storage"
 )
 
 // Server represents the all the listening urls
 type Server struct {
-	//	db    *bolt.DB
-	//store *storage.Store
-	r *gin.Engine
+	store *storage.Store
+	r     *gin.Engine
 }
 
 // New instance of Server. Starts bolt
-func New() *Server {
+func New(cachePath string) (*Server, error) {
+	st, err := storage.New(cachePath)
 
 	return &Server{
-		//store: store,
-		r: gin.Default(),
-	}
-
+		store: st,
+		r:     gin.Default(),
+	}, err
 }
 
 //ReturnJSON is the "message" object that is returned
@@ -66,7 +66,7 @@ func (sv *Server) Listen(ip string, port string, debug bool) {
 	}
 
 	// list tree
-	r.GET("/")
+	r.GET("/", sv.getRoot)
 
 	// addParentNode
 	r.POST("/", sv.checkContentType)

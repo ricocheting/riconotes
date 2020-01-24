@@ -22,6 +22,7 @@ type Store struct {
 type Node struct {
 	ID       string  `json:"id"`
 	Title    string  `json:"title"`
+	Expand   bool    `json:"expand,omitempty"` // will not have "expand" for false values in json (file or api)
 	Children []*Node `json:"children"`
 }
 

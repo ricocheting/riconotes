@@ -3,7 +3,12 @@ package storage
 import (
 	"errors"
 	"io/ioutil"
+	"os"
 	"regexp"
+)
+
+const (
+	filemode = os.FileMode(0644)
 )
 
 var (
@@ -18,8 +23,22 @@ func (st *Store) Delete() {
 
 }
 
-func (st *Store) Update() {
+func (st *Store) Update(id string, content string) error {
+	filename, ok := st.FilePath(id)
 
+	if !ok {
+		return errors.New("ID " + id + " is not valid")
+	}
+
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		return errors.New("file " + filename + " does not exist")
+	}
+
+	if err := ioutil.WriteFile(filename, []byte(content), filemode); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (st *Store) Load(id string) (string, error) {

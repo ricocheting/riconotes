@@ -61,7 +61,7 @@ func (sv *Server) Listen(ip string, port string, debug bool) {
 	if debug {
 		config := cors.DefaultConfig()
 		config.AllowAllOrigins = true
-		config.AllowMethods = []string{"GET", "POST", "PATCH", "DELETE"}
+		config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE"}
 		r.Use(cors.New(config))
 	}
 
@@ -78,7 +78,9 @@ func (sv *Server) Listen(ip string, port string, debug bool) {
 	r.GET("/:id", sv.getNode)
 	// remove node
 	r.DELETE("/:id")
-	// update node (title, expand, content)
+	// update node (content)
+	r.PUT("/:id", sv.putNode)
+	// update node tree info (title, expand)
 	r.PATCH("/:id")
 
 	r.Run(ip + ":" + port) // listen and serve

@@ -62,3 +62,11 @@ func (st *Store) HasChildren(id string) bool {
 
 	return true
 }
+
+func (st *Store) GetTree() []*Node {
+	st.mux.RLock()
+	tree := st.tree
+	st.mux.RUnlock()
+
+	return tree
+}

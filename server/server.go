@@ -75,7 +75,7 @@ func (sv *Server) Listen(ip string, port string, debug bool) {
 	r.POST("/:id/child")
 
 	// display node
-	r.GET("/:id")
+	r.GET("/:id", sv.getNode)
 	// remove node
 	r.DELETE("/:id")
 	// update node (title or expanded)

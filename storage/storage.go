@@ -3,6 +3,7 @@ package storage
 import (
 	"encoding/json"
 	"io/ioutil"
+	"sync"
 )
 
 const (
@@ -14,6 +15,8 @@ type Store struct {
 	tree      []*Node
 	settings  *Settings
 	cachePath string //include trailing slash
+
+	mux sync.RWMutex
 }
 
 type Node struct {

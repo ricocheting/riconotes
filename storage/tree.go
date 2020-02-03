@@ -1,47 +1,12 @@
 package storage
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"sync"
 )
 
 type Tree struct {
 	nodes []*Node
 	mux   sync.RWMutex
-}
-
-type Node struct {
-	ID       string  `json:"id"`
-	Title    string  `json:"title"`
-	Expand   bool    `json:"expand,omitempty"` // will not have "expand" for false values in json (file or api)
-	Children []*Node `json:"children"`
-}
-
-func (st *Store) loadTree() error {
-
-	// read file
-	data, err := ioutil.ReadFile(st.cachePath + TREEFILE)
-	if err != nil {
-		return err
-	}
-
-	if st.tree == nil {
-		st.tree = &Tree{}
-	}
-
-	// unmarshall it into Store
-	err = json.Unmarshal(data, &st.tree.nodes)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (st *Store) saveTree() error {
-
-	return nil
 }
 
 func (t *Tree) Attach(parentID string, n Node) bool {
@@ -136,19 +101,6 @@ func (t *Tree) First() (*Node, bool) {
 	}
 
 	return &Node{}, false
-}
-
-// FirstChild() of node
-func (n *Node) FirstChild() (*Node, bool) {
-	for _, node := range n.Children {
-		return node, true
-	}
-
-	return &Node{}, false
-}
-
-func (n *Node) HasChildren() bool {
-	return len(n.Children) > 0
 }
 
 func (st *Store) GetTree() *Tree {

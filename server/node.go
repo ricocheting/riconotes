@@ -64,8 +64,8 @@ func (sv *Server) patchNode(c *gin.Context) {
 	id := c.Param("id")
 
 	type Request struct {
-		Expanded *bool  `json:"expanded"`
-		Title    string `json:"title"`
+		Expand *bool  `json:"expand"` // if (req.Expand == nil) it wasn't submitted/doesn't need changed
+		Title  string `json:"title"`
 	}
 
 	var req Request
@@ -75,15 +75,23 @@ func (sv *Server) patchNode(c *gin.Context) {
 		return
 	}
 
-	if len(req.Title) < 1 && req.Expanded == nil {
-		sv.returnError(c, http.StatusUnprocessableEntity, "Submitted data did not have the required JSON fields", "Need 'expanded' or 'title' fields")
+	if len(req.Title) < 1 && req.Expand == nil {
+		sv.returnError(c, http.StatusUnprocessableEntity, "Submitted data did not have the required JSON fields", "Need 'expand' or 'title' fields")
 		return
 	}
+	// update the tree node as necessary
+	tree := sv.store.GetTree()
 
-	if len(req.Title) > 1 {
-		// update the tree node as necessary
-		//sv.store.Update(id string, content string)
+	if node, ok := tree.Find(id); ok {
+		if len(req.Title) > 1 {
+			node.Title = req.Title
+		}
+		if req.Expand != nil {
+			node.Expand = *req.Expand
+		}
 	}
+
+	sv.store.SaveTree()
 
 	//fmt.Printf("%t = %v = %v\n", (req.Expanded != nil), req.Expanded, req.Title)
 

@@ -5,6 +5,17 @@ import (
 	"io/ioutil"
 )
 
+type Tree struct {
+	nodes []*Node
+}
+
+type Node struct {
+	ID       string  `json:"id"`
+	Title    string  `json:"title"`
+	Expand   bool    `json:"expand,omitempty"` // will not have "expand" for false values in json (file or api)
+	Children []*Node `json:"children"`
+}
+
 func (st *Store) loadTree() error {
 
 	// read file
@@ -27,43 +38,85 @@ func (st *Store) saveTree() error {
 	return nil
 }
 
-func (st *Store) Attach(parentID string, n Node) bool {
+func (t *Tree) Attach(parentID string, n Node) bool {
 
 	return true
 }
 
-// desc: crawls _tree and returns pointer to the node to edit
+// desc: crawls tree and returns pointer to the node to edit
 // param: id to find
-// returns: pointer to node, false on not found
-func (st *Store) Find(id string, children []*Node) (*Node, bool) {
-
-	return &Node{}, true
+// returns: pointer to node, bool if found
+func (t *Tree) Find(id string) (*Node, bool) {
+	return treeFind(id, t.nodes)
 }
+func treeFind(id string, children []*Node) (*Node, bool) {
 
-// desc: crawls _tree and deletes the node matching the id
-// param: id to remove
-// returns: bool if found
-func (st *Store) prune(id string, children []*Node) bool {
+	for _, node := range children {
+		if node.ID == id {
+			return node, true
+		}
 
-	return true
+		// crawl if node has children
+		idReturn, cReturn := &Node{}, false
+		if node.HasChildren() {
+			idReturn, cReturn = treeFind(id, node.Children)
+		}
+
+		if cReturn {
+			return idReturn, cReturn
+		}
+	}
+
+	return &Node{}, false
 }
 
 // param: node id
 // returns: bool if successful
 // note: if moving, attach new before detach old. "Safe" to call as it won't work if node has children
-func (st *Store) Detach(id string) bool {
+func (t *Tree) Detach(id string) bool {
 
-	return true
+	return treeDetach(id, t.nodes)
+}
+
+// return bool if found
+func treeDetach(id string, children []*Node) bool {
+
+	for _, node := range children {
+		if node.ID == id {
+			// todo: unset(children[key])
+			return true
+		}
+
+		// crawl if node has children
+		cReturn := false
+		if node.HasChildren() {
+			cReturn = treeDetach(id, node.Children)
+		}
+
+		if cReturn {
+			// todo: reindex node.children if needed
+			return cReturn
+		}
+	}
+
+	return false
 }
 
 // param: node id
 // returns: bool
-func (st *Store) HasChildren(id string) bool {
+func (t *Tree) HasChildren(id string) bool {
+	if node, ok := t.Find(id); ok {
+		return node.HasChildren()
+	}
 
-	return true
+	return false
 }
 
-func (st *Store) GetTree() []*Node {
+func (n *Node) HasChildren() bool {
+	return len(n.Children) > 0
+}
+
+func (st *Store) GetTree() *Tree {
 	st.mux.RLock()
 	tree := st.tree
 	st.mux.RUnlock()

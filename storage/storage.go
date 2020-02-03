@@ -3,7 +3,6 @@ package storage
 import (
 	"encoding/json"
 	"io/ioutil"
-	"sync"
 )
 
 const (
@@ -12,18 +11,11 @@ const (
 )
 
 type Store struct {
-	tree      []*Node
+	tree      *Tree
 	settings  *Settings
 	cachePath string //include trailing slash
 
-	mux sync.RWMutex
-}
-
-type Node struct {
-	ID       string  `json:"id"`
-	Title    string  `json:"title"`
-	Expand   bool    `json:"expand,omitempty"` // will not have "expand" for false values in json (file or api)
-	Children []*Node `json:"children"`
+	//mux sync.RWMutex
 }
 
 type Settings struct {

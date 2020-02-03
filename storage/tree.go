@@ -3,10 +3,12 @@ package storage
 import (
 	"encoding/json"
 	"io/ioutil"
+	"sync"
 )
 
 type Tree struct {
 	nodes []*Node
+	mux   sync.RWMutex
 }
 
 type Node struct {
@@ -24,8 +26,12 @@ func (st *Store) loadTree() error {
 		return err
 	}
 
+	if st.tree == nil {
+		st.tree = &Tree{}
+	}
+
 	// unmarshall it into Store
-	err = json.Unmarshal(data, &st.tree)
+	err = json.Unmarshal(data, &st.tree.nodes)
 	if err != nil {
 		return err
 	}
@@ -105,11 +111,40 @@ func treeDetach(id string, children []*Node) bool {
 // param: node id
 // returns: bool
 func (t *Tree) HasChildren(id string) bool {
+	t.mux.RLock()
+	defer t.mux.RUnlock()
+
 	if node, ok := t.Find(id); ok {
 		return node.HasChildren()
 	}
 
 	return false
+}
+func (t *Tree) Empty() bool {
+	t.mux.RLock()
+	out := len(t.nodes) < 1
+	t.mux.RUnlock()
+
+	return out
+}
+func (t *Tree) First() (*Node, bool) {
+	t.mux.RLock()
+	defer t.mux.RUnlock()
+
+	for _, node := range t.nodes {
+		return node, true
+	}
+
+	return &Node{}, false
+}
+
+// FirstChild() of node
+func (n *Node) FirstChild() (*Node, bool) {
+	for _, node := range n.Children {
+		return node, true
+	}
+
+	return &Node{}, false
 }
 
 func (n *Node) HasChildren() bool {
@@ -117,9 +152,17 @@ func (n *Node) HasChildren() bool {
 }
 
 func (st *Store) GetTree() *Tree {
-	st.mux.RLock()
+	//st.mux.RLock()
 	tree := st.tree
-	st.mux.RUnlock()
+	//st.mux.RUnlock()
 
 	return tree
+}
+
+func (t *Tree) List() []*Node {
+	t.mux.RLock()
+	nodes := t.nodes
+	t.mux.RUnlock()
+
+	return nodes
 }

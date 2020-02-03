@@ -12,8 +12,12 @@ func (sv *Server) getRoot(c *gin.Context) {
 
 	tree := sv.store.GetTree()
 
-	if len(id) < 1 && len(tree) > 0 && tree[0] != nil && len(tree[0].Children) > 0 && tree[0].Children[0] != nil {
-		id = tree[0].Children[0].ID
+	if len(id) < 1 && !tree.Empty() {
+		if node, ok := tree.First(); ok {
+			if cNode, cOK := node.FirstChild(); cOK {
+				id = cNode.ID
+			}
+		}
 	}
 
 	var (
@@ -34,7 +38,7 @@ func (sv *Server) getRoot(c *gin.Context) {
 		Tree    []*storage.Node `json:"tree"`
 		Content string          `json:"content"`
 	}{
-		tree,
+		tree.List(),
 		content,
 	}
 

@@ -1,8 +1,9 @@
 package server
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (sv *Server) getNode(c *gin.Context) {
@@ -53,6 +54,44 @@ func (sv *Server) putNode(c *gin.Context) {
 		Status:  "success",
 		Message: "Successfully updated content node " + id,
 		Payload: payload,
+	}
+
+	c.JSON(http.StatusOK, out)
+}
+
+//putNode() updates tree content (expanded, title)
+func (sv *Server) patchNode(c *gin.Context) {
+	id := c.Param("id")
+
+	type Request struct {
+		Expanded *bool  `json:"expanded"`
+		Title    string `json:"title"`
+	}
+
+	var req Request
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		sv.returnError(c, http.StatusUnprocessableEntity, "Submitted data did not have the required JSON fields", err.Error())
+		return
+	}
+
+	if len(req.Title) < 1 && req.Expanded == nil {
+		sv.returnError(c, http.StatusUnprocessableEntity, "Submitted data did not have the required JSON fields", "Need 'expanded' or 'title' fields")
+		return
+	}
+
+	if len(req.Title) > 1 {
+		// update the tree node as necessary
+		//sv.store.Update(id string, content string)
+	}
+
+	//fmt.Printf("%t = %v = %v\n", (req.Expanded != nil), req.Expanded, req.Title)
+
+	out := Response{
+		Code:    http.StatusOK,
+		Status:  "success",
+		Message: "Successfully updated content node " + id,
+		Payload: "payload",
 	}
 
 	c.JSON(http.StatusOK, out)

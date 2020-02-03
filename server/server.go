@@ -79,9 +79,9 @@ func (sv *Server) Listen(ip string, port string, debug bool) {
 	// remove node
 	r.DELETE("/:id")
 	// update node (content)
-	r.PUT("/:id", sv.putNode)
+	r.PUT("/:id", sv.patchNode)
 	// update node tree info (title, expand)
-	r.PATCH("/:id")
+	r.PATCH("/:id", sv.patchNode)
 
 	r.Run(ip + ":" + port) // listen and serve
 }

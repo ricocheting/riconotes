@@ -9,9 +9,13 @@ type Tree struct {
 	mux   sync.RWMutex
 }
 
-func (t *Tree) Attach(parentID string, n Node) bool {
+func (t *Tree) Attach(parentID string, n *Node) bool {
+	if parentNode, ok := t.Find(parentID); ok {
+		parentNode.Children = append(parentNode.Children, n)
+		return true
+	}
 
-	return true
+	return false
 }
 
 // desc: crawls tree and returns pointer to the node to edit

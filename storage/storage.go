@@ -58,6 +58,23 @@ func (st *Store) loadSettings() error {
 	return nil
 }
 
+//SaveSettings to json flat file
+func (st *Store) SaveSettings() error {
+	st.mux.RLock()
+	defer st.mux.RUnlock()
+
+	file, err := json.MarshalIndent(st.settings, "", "")
+	if err != nil {
+		return err
+	}
+
+	if err := ioutil.WriteFile(st.cachePath+SETTINGSFILE, file, filemode); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (st *Store) loadTree() error {
 
 	// read file
@@ -103,4 +120,13 @@ func (st *Store) Tree() *Tree {
 	st.mux.RUnlock()
 
 	return tree
+}
+
+// return the Settings
+func (st *Store) Settings() *Settings {
+	st.mux.RLock()
+	settings := st.settings
+	st.mux.RUnlock()
+
+	return settings
 }

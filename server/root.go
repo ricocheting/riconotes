@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -46,6 +47,48 @@ func (sv *Server) getRoot(c *gin.Context) {
 		Code:    http.StatusOK,
 		Status:  "success",
 		Message: "Successfully listed tree",
+		Payload: payload,
+	}
+
+	c.JSON(http.StatusOK, out)
+}
+
+func (sv *Server) insertChild(c *gin.Context) {
+	parentID := c.Param("id")
+
+	// get next available ID from settings. convert it to 4 digit id
+	nextID := fmt.Sprintf("%04d", sv.store.Settings().NextID)
+
+	//attach it to the parent
+	node := &storage.Node{
+		ID:       nextID,
+		Title:    "New Node " + nextID,
+		Children: []*storage.Node{},
+	}
+
+	// try to attach new node to parent
+	if ok := sv.store.Tree().Attach(parentID, node); ok {
+		// increment the next available ID and save settings file
+		sv.store.Settings().NextID = sv.store.Settings().NextID + 1
+		sv.store.SaveSettings()
+
+		// save the tree changes
+		sv.store.SaveTree()
+	} else {
+		sv.returnError(c, http.StatusBadRequest, "New node could not be attached to parent "+parentID+". Invalid ParentID?", "")
+		return
+	}
+
+	payload := struct {
+		Tree []*storage.Node `json:"tree"`
+	}{
+		sv.store.Tree().List(),
+	}
+
+	out := Response{
+		Code:    http.StatusOK,
+		Status:  "success",
+		Message: "Child node added to " + parentID + "",
 		Payload: payload,
 	}
 

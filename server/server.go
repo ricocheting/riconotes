@@ -72,7 +72,7 @@ func (sv *Server) Listen(ip string, port string, debug bool) {
 	r.POST("/", sv.checkContentType)
 
 	// addChildNode
-	r.POST("/:id/child")
+	r.POST("/:id/child", sv.insertChild)
 
 	// display node
 	r.GET("/:id", sv.getNode)

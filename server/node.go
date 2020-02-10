@@ -9,24 +9,30 @@ import (
 func (sv *Server) getNode(c *gin.Context) {
 	id := c.Param("id")
 
-	node, err := sv.store.Load(id)
-
-	if err != nil {
-		sv.returnError(c, http.StatusNotFound, "Node ID was not found in database: "+id, err.Error())
+	// check if it was in tree
+	if _, ok := sv.store.Tree().Find(id); !ok {
+		sv.returnError(c, http.StatusNotFound, "Node ID does not exist (Invalid): "+id, "")
 		return
 	}
+
+	// node exists, but content file might not
+	node, err := sv.store.Load(id)
 
 	out := Response{
 		Code:    http.StatusOK,
 		Status:  "success",
-		Message: "Successfully retrieved node " + id,
+		Message: "Successfully retrieved node: " + id,
 		Payload: node,
+	}
+
+	if err != nil {
+		out.Message = "Node exists, but was blank: " + id
 	}
 
 	c.JSON(http.StatusOK, out)
 }
 
-//putNode() updates content
+//putNode() replaces node content
 func (sv *Server) putNode(c *gin.Context) {
 	id := c.Param("id")
 
@@ -59,7 +65,7 @@ func (sv *Server) putNode(c *gin.Context) {
 	c.JSON(http.StatusOK, out)
 }
 
-//putNode() updates tree content (expanded, title)
+//patchNode() updates node (expand or title)
 func (sv *Server) patchNode(c *gin.Context) {
 	id := c.Param("id")
 
@@ -80,7 +86,7 @@ func (sv *Server) patchNode(c *gin.Context) {
 		return
 	}
 	// update the tree node as necessary
-	tree := sv.store.GetTree()
+	tree := sv.store.Tree()
 
 	if node, ok := tree.Find(id); ok {
 		if len(req.Title) > 1 {
@@ -99,7 +105,7 @@ func (sv *Server) patchNode(c *gin.Context) {
 		Code:    http.StatusOK,
 		Status:  "success",
 		Message: "Successfully updated node " + id,
-		Payload: sv.store.GetTree().List(),
+		Payload: sv.store.Tree().List(),
 	}
 
 	c.JSON(http.StatusOK, out)

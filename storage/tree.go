@@ -103,14 +103,6 @@ func (t *Tree) First() (*Node, bool) {
 	return &Node{}, false
 }
 
-func (st *Store) GetTree() *Tree {
-	//st.mux.RLock()
-	tree := st.tree
-	//st.mux.RUnlock()
-
-	return tree
-}
-
 func (t *Tree) List() []*Node {
 	t.mux.RLock()
 	nodes := t.nodes

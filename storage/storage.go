@@ -3,6 +3,7 @@ package storage
 import (
 	"encoding/json"
 	"io/ioutil"
+	"sync"
 )
 
 const (
@@ -15,33 +16,27 @@ type Store struct {
 	settings  *Settings
 	cachePath string //include trailing slash
 
-	//mux sync.RWMutex
+	mux sync.RWMutex
 }
 
 type Settings struct {
 	NextID int64 `json:"nextID"`
 }
 
-// New instance of Server. Starts bolt
+// New instance of Store. load the tree and the settings from the flat files
 func New(cachePath string) (*Store, error) {
-
-	// load the tree and the settings from the flat files
 
 	st := &Store{
 		cachePath: cachePath,
 	}
 
-	if err := st.LoadTree(); err != nil {
+	if err := st.loadTree(); err != nil {
 		return st, err
 	}
 
 	if err := st.loadSettings(); err != nil {
 		return st, err
 	}
-
-	// for _, node := range st.tree {
-	// 	fmt.Printf("node: %v\n", node)
-	// }
 
 	return st, nil
 }
@@ -54,7 +49,7 @@ func (st *Store) loadSettings() error {
 		return err
 	}
 
-	// unmarshall it into Store
+	// unmarshall it into Store.settings
 	err = json.Unmarshal(data, &st.settings)
 	if err != nil {
 		return err
@@ -63,7 +58,7 @@ func (st *Store) loadSettings() error {
 	return nil
 }
 
-func (st *Store) LoadTree() error {
+func (st *Store) loadTree() error {
 
 	// read file
 	data, err := ioutil.ReadFile(st.cachePath + TREEFILE)
@@ -75,7 +70,7 @@ func (st *Store) LoadTree() error {
 		st.tree = &Tree{}
 	}
 
-	// unmarshall it into Store
+	// unmarshall it into Store.tree.nodes
 	err = json.Unmarshal(data, &st.tree.nodes)
 	if err != nil {
 		return err
@@ -84,8 +79,10 @@ func (st *Store) LoadTree() error {
 	return nil
 }
 
+//SaveTree to json flat file
 func (st *Store) SaveTree() error {
-	// todo: this def needs lock
+	st.mux.RLock()
+	defer st.mux.RUnlock()
 
 	file, err := json.MarshalIndent(st.tree.List(), "", "\t")
 	if err != nil {
@@ -97,4 +94,13 @@ func (st *Store) SaveTree() error {
 	}
 
 	return nil
+}
+
+// return the Tree
+func (st *Store) Tree() *Tree {
+	st.mux.RLock()
+	tree := st.tree
+	st.mux.RUnlock()
+
+	return tree
 }

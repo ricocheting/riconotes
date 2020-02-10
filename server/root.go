@@ -10,7 +10,7 @@ import (
 func (sv *Server) getRoot(c *gin.Context) {
 	id := c.DefaultQuery("id", "")
 
-	tree := sv.store.GetTree()
+	tree := sv.store.Tree()
 
 	if len(id) < 1 && !tree.Empty() {
 		if node, ok := tree.First(); ok {

@@ -98,8 +98,8 @@ func (sv *Server) patchNode(c *gin.Context) {
 	out := Response{
 		Code:    http.StatusOK,
 		Status:  "success",
-		Message: "Successfully updated content node " + id,
-		Payload: "payload",
+		Message: "Successfully updated node " + id,
+		Payload: sv.store.GetTree().List(),
 	}
 
 	c.JSON(http.StatusOK, out)

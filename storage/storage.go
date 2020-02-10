@@ -87,7 +87,7 @@ func (st *Store) LoadTree() error {
 func (st *Store) SaveTree() error {
 	// todo: this def needs lock
 
-	file, err := json.MarshalIndent(st.tree.List(), "", "")
+	file, err := json.MarshalIndent(st.tree.List(), "", "\t")
 	if err != nil {
 		return err
 	}

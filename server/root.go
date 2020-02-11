@@ -94,3 +94,44 @@ func (sv *Server) insertChild(c *gin.Context) {
 
 	c.JSON(http.StatusOK, out)
 }
+
+func (sv *Server) insertParent(c *gin.Context) {
+
+	// get next available ID from settings. convert it to 4 digit id
+	nextID := fmt.Sprintf("%04d", sv.store.Settings().NextID)
+
+	//attach it to the parent
+	node := &storage.Node{
+		ID:       nextID,
+		Title:    "New Parent " + nextID,
+		Children: []*storage.Node{},
+	}
+
+	// try to attach new node to parent
+	if ok := sv.store.Tree().CreateParent(node); ok {
+		// increment the next available ID and save settings file
+		sv.store.Settings().NextID = sv.store.Settings().NextID + 1
+		sv.store.SaveSettings()
+
+		// save the tree changes
+		sv.store.SaveTree()
+	} else {
+		sv.returnError(c, http.StatusBadRequest, "New parent node could not created.", "")
+		return
+	}
+
+	payload := struct {
+		Tree []*storage.Node `json:"tree"`
+	}{
+		sv.store.Tree().List(),
+	}
+
+	out := Response{
+		Code:    http.StatusOK,
+		Status:  "success",
+		Message: "Parent node added",
+		Payload: payload,
+	}
+
+	c.JSON(http.StatusOK, out)
+}

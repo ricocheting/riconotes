@@ -18,6 +18,11 @@ func (t *Tree) Attach(parentID string, n *Node) bool {
 	return false
 }
 
+func (t *Tree) CreateParent(n *Node) bool {
+	t.nodes = append(t.nodes, n)
+	return true
+}
+
 // desc: crawls tree and returns pointer to the node to edit
 // param: id to find
 // returns: pointer to node, bool if found

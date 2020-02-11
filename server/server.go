@@ -68,20 +68,21 @@ func (sv *Server) Listen(ip string, port string, debug bool) {
 	// list tree
 	r.GET("/", sv.getRoot)
 
-	// addParentNode
-	r.POST("/", sv.checkContentType)
+	// add new parent node addParentNode
+	r.POST("/", sv.checkContentType, sv.insertParent)
 
-	// addChildNode
+	// add new child node
 	r.POST("/:id/child", sv.insertChild)
 
-	// display node
+	// display node (content)
 	r.GET("/:id", sv.getNode)
-	// remove node
+	// remove node (content)
 	r.DELETE("/:id", sv.deleteNode)
 	// update node (content)
-	r.PUT("/:id", sv.putNode)
+	r.PUT("/:id", sv.checkContentType, sv.putNode)
+
 	// update node tree info (title, expand)
-	r.PATCH("/:id", sv.patchNode)
+	r.PATCH("/:id", sv.checkContentType, sv.patchNode)
 
 	r.Run(ip + ":" + port) // listen and serve
 }

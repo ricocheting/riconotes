@@ -129,9 +129,10 @@ func (sv *Server) deleteNode(c *gin.Context) {
 		return
 	}
 
-	//sv.store.SaveTree()
+	sv.store.SaveTree()
 
-	// TODO: delete the content file (if it exists)
+	// delete the content file (if it exists)
+	sv.store.Delete(id)
 
 	out := Response{
 		Code:    http.StatusOK,

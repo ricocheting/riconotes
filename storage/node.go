@@ -65,6 +65,21 @@ func (st *Store) Load(id string) (string, error) {
 	return string(data), nil
 }
 
+// Delete() the node content file
+func (st *Store) Delete(id string) error {
+	filename, ok := st.FilePath(id)
+
+	if !ok {
+		return errors.New("ID " + id + " is not valid")
+	}
+
+	if err := os.Remove(filename); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // FilePath() for the node
 func (st *Store) FilePath(id string) (string, bool) {
 	// basic error checking of ID

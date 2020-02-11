@@ -87,3 +87,14 @@ func (n *Node) FirstChild() (*Node, bool) {
 func (n *Node) HasChildren() bool {
 	return len(n.Children) > 0
 }
+
+// ChildIndex() returns int index of id. -1 if not found
+func (n *Node) ChildIndex(id string) int {
+	for i, node := range n.Children {
+		if node.ID == id {
+			return i
+		}
+	}
+
+	return -1
+}

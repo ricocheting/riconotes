@@ -45,33 +45,57 @@ func treeFind(id string, children []*Node) (*Node, bool) {
 	return &Node{}, false
 }
 
-// param: node id
-// returns: bool if successful
-// note: if moving, attach new before detach old. "Safe" to call as it won't work if node has children
-func (t *Tree) Detach(id string) bool {
-
-	return treeDetach(id, t.nodes)
-}
-
-// return bool if found
-func treeDetach(id string, children []*Node) bool {
-
-	for _, node := range children {
+func (t *Tree) FindParent(id string) (*Node, bool) {
+	for _, node := range t.nodes {
 		if node.ID == id {
-			// todo: unset(children[key])
-			return true
+			return node, true
+		}
+
+		cNode, cReturn := treeFindParent(id, node)
+
+		if cReturn {
+			return cNode, cReturn
+		}
+	}
+
+	return &Node{}, false
+}
+func treeFindParent(id string, parent *Node) (*Node, bool) {
+
+	for _, node := range parent.Children {
+		if node.ID == id {
+			return parent, true
 		}
 
 		// crawl if node has children
-		cReturn := false
+		idReturn, cReturn := &Node{}, false
 		if node.HasChildren() {
-			cReturn = treeDetach(id, node.Children)
+			idReturn, cReturn = treeFindParent(id, node)
 		}
 
 		if cReturn {
-			// todo: reindex node.children if needed
-			return cReturn
+			return idReturn, cReturn
 		}
+	}
+
+	return &Node{}, false
+}
+
+// param: node id
+// returns: bool if successful
+// note: if moving, Attach new before Detach old
+func (t *Tree) Detach(id string) bool {
+
+	if parentNode, ok := t.FindParent(id); ok {
+		//fmt.Printf("found parent %v\n", parentNode)
+
+		if i := parentNode.ChildIndex(id); i > -1 {
+			copy(parentNode.Children[i:], parentNode.Children[i+1:])
+			parentNode.Children[len(parentNode.Children)-1] = nil
+			parentNode.Children = parentNode.Children[:len(parentNode.Children)-1]
+			return true
+		}
+
 	}
 
 	return false

@@ -110,3 +110,35 @@ func (sv *Server) patchNode(c *gin.Context) {
 
 	c.JSON(http.StatusOK, out)
 }
+
+func (sv *Server) deleteNode(c *gin.Context) {
+	id := c.Param("id")
+
+	// check if it was in tree
+	node, ok := sv.store.Tree().Find(id)
+	if !ok {
+		sv.returnError(c, http.StatusNotFound, "Node ID does not exist (Invalid): "+id, "")
+		return
+	} else if node.HasChildren() {
+		sv.returnError(c, http.StatusBadRequest, "Node has children. Can not delete: "+id, "")
+		return
+	}
+
+	if ok := sv.store.Tree().Detach(id); !ok {
+		sv.returnError(c, http.StatusBadRequest, "There was a problem detaching the node: "+id, "")
+		return
+	}
+
+	//sv.store.SaveTree()
+
+	// TODO: delete the content file (if it exists)
+
+	out := Response{
+		Code:    http.StatusOK,
+		Status:  "success",
+		Message: "Successfully detaching node: " + id,
+		Payload: sv.store.Tree().List(),
+	}
+
+	c.JSON(http.StatusOK, out)
+}

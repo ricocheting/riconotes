@@ -14,6 +14,7 @@ func main() {
 	port := flag.String("p", "8080", "Port number to bind to")
 	ip := flag.String("ip", "", "IP to bind to")
 	debug := flag.Bool("debug", false, "Whether to send CORS headers")
+	init := flag.Bool("init", false, "Setup the initial json files (if they do not exist)")
 
 	flag.Parse()
 
@@ -21,7 +22,7 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	srv, err := server.New(*cachePath)
+	srv, err := server.New(*cachePath, *init)
 
 	if err != nil {
 		log.Fatalf("Error opening storage and starting server: %v\n", err)

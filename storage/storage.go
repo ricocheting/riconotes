@@ -2,7 +2,9 @@ package storage
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"os"
 	"sync"
 )
 
@@ -24,10 +26,46 @@ type Settings struct {
 }
 
 // New instance of Store. load the tree and the settings from the flat files
-func New(cachePath string) (*Store, error) {
+func New(cachePath string, init bool) (*Store, error) {
 
 	st := &Store{
 		cachePath: cachePath,
+	}
+
+	existsSettings := st.ExistsSettings()
+	existsTree := st.ExistsTree()
+
+	if !existsSettings || !existsTree {
+		if init {
+			if !existsSettings {
+				st.settings = &Settings{NextID: 1}
+				st.SaveSettings()
+			}
+			if !existsTree {
+				st.tree = &Tree{nodes: []*Node{}}
+				nextID := fmt.Sprintf("%04d", st.Settings().NextID)
+
+				//attach it to the parent
+				node := &Node{
+					ID:       nextID,
+					Title:    "New Parent " + nextID,
+					Children: []*Node{},
+				}
+
+				// try to attach new node to parent
+				if ok := st.Tree().CreateParent(node); ok {
+					// increment the next available ID and save settings file
+					st.Settings().NextID = st.Settings().NextID + 1
+					st.SaveSettings()
+
+					// save the tree changes
+					st.SaveTree()
+				}
+			}
+
+		} else {
+			return st, fmt.Errorf("json files " + st.cachePath + SETTINGSFILE + " or " + st.cachePath + TREEFILE + " do not exist. provide the correct -cache=\"\" path or run with -init")
+		}
 	}
 
 	if err := st.loadTree(); err != nil {
@@ -73,6 +111,20 @@ func (st *Store) SaveSettings() error {
 	}
 
 	return nil
+}
+
+func (st *Store) ExistsSettings() bool {
+	if _, err := os.Stat(st.cachePath + SETTINGSFILE); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+func (st *Store) ExistsTree() bool {
+	if _, err := os.Stat(st.cachePath + TREEFILE); os.IsNotExist(err) {
+		return false
+	}
+	return true
 }
 
 func (st *Store) loadTree() error {

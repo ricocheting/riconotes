@@ -17,8 +17,8 @@ type Server struct {
 }
 
 // New instance of Server. Starts bolt
-func New(cachePath string) (*Server, error) {
-	st, err := storage.New(cachePath)
+func New(cachePath string, init bool) (*Server, error) {
+	st, err := storage.New(cachePath, init)
 
 	return &Server{
 		store: st,

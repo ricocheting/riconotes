@@ -1,0 +1,173 @@
+body{
+	padding-top:20px;
+	overflow-y:scroll;/* so the page won't "jump around" when switching on/off long content that (might) scroll page */
+}
+/* without this there is horizontal scrolling on mobile. but no content is ever there */
+#root{
+	overflow-x:hidden;
+	padding-bottom:20px;
+}
+
+.container{
+	max-width:1280px;
+	margin:0 auto;
+}
+
+@media all and (max-width: 1280px) {
+	.container{
+		margin:0 5px;
+	}
+}
+
+/* tab styles */
+ul.tabs{
+	display:flex;
+	margin:0;
+	margin-left:8px;
+	padding:0;
+}
+ul.tabs li{
+	background-color:rgba(231, 231, 231, 0.966);
+	display:flex;
+	border:1px solid gray;
+	border-bottom:0;
+	cursor: pointer;;
+	margin:0 4px 0 0;
+	border-radius:5px 5px 0 0;
+}
+ul.tabs li:hover{
+	background-color:white;
+	color:#1890ff;
+}
+ul.tabs li .title>div{/*so the title text expands full width of "tab" and there's not unclickable dead area on the sides; but the padding here*/
+	padding: 0 10px;
+}
+
+ul.tabs li.active{
+	background-color:white;
+	/*border-bottom:1px solid white;*/
+	color:#1890ff;
+	margin-bottom:-1px;
+}
+ul.tabs li .icons-list{
+	margin:0 8px 0 10px;/*negative right to make up for ul.tabs padding*/
+	float:right;
+	cursor:pointer;
+}
+
+.tabs-add{
+	float:right;
+	margin-left:16px;
+	cursor: pointer;
+}
+
+/* bar under the tabs for editing the current node */
+.tabBar{
+	background-color:white;
+	padding: 12px 50px 12px 20px;
+	border:1px solid gray;
+	min-height:60px;
+}
+.tabBar>div{
+	display:inline-block;
+}
+.tabBar h2{
+	margin:0 20px 0 0;
+}
+
+/* tree styles */
+.tree{
+	border:1px solid gray;
+	border-top:0;
+	padding:10px 0 0 0;
+	box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+}
+.treeAddBtn{
+	text-align:center;
+	border-top:1px solid gray;
+	padding: 7px 0;
+}
+@media all and (max-width: 992px){
+	.tree{
+		box-shadow: none;
+	}
+}
+.tree>ul{
+	margin:0;
+	padding:0;
+}
+.tree li{
+	margin:0;
+	padding:0;
+	display:block;
+}
+.tree li>.title{
+	cursor:default;
+	border: 1px solid transparent;
+}
+.tree li.active>.title{
+	border: 1px solid #1890ff;
+}
+.tree li>div{
+	display:inline-block;
+}
+
+/* content/editing */
+/*.contentSaveContainer{
+	margin-top:15px;
+}*/
+.contentBlock{
+	display:flex;
+	height: calc(100vh - 200px);
+}
+.contentBlock .contentEdit, .contentBlock .contentCode{
+	flex:1;
+}
+.contentBlock .contentCode{
+	margin-left:20px;
+	overflow-y:scroll;
+}
+.contentFormatContainer{
+	margin:0 5px 8px 0;
+}
+
+pre {
+	white-space: pre-wrap;
+}
+.contentCode pre{
+	background-color:#eff0f1;
+	margin-bottom: 1em;
+	padding: 12px 8px;
+	width: auto;
+	border-radius: 3px;
+}
+.contentCode p code, .contentCode li code{
+	padding: 1px 5px;
+}
+.contentCode code{
+	color:#c51916;
+	background-color:#eff0f1;
+}
+.contentCode pre code{
+	color:#962e8f;
+}
+.contentCode .comment{
+	color:#008000;
+}
+.contentCode hr{
+	height:0;
+	border:0;
+	border-top:1px dotted gray;
+}
+.contentCode b {
+	color: rgba(0,0,0,.80);
+}
+.contentEdit textarea{
+	width:100%;
+	height:100%;
+}
+
+/* HTML paster in content editor */
+.contentPasteModal textarea{
+	width:100%;
+}

@@ -10,6 +10,9 @@ type Tree struct {
 }
 
 func (t *Tree) Attach(parentID string, n *Node) bool {
+	t.mux.Lock()
+	defer t.mux.Unlock()
+
 	if parentNode, ok := t.Find(parentID); ok {
 		parentNode.Children = append(parentNode.Children, n)
 		return true
@@ -19,7 +22,10 @@ func (t *Tree) Attach(parentID string, n *Node) bool {
 }
 
 func (t *Tree) CreateParent(n *Node) bool {
+	t.mux.Lock()
 	t.nodes = append(t.nodes, n)
+	t.mux.Unlock()
+
 	return true
 }
 
@@ -27,6 +33,9 @@ func (t *Tree) CreateParent(n *Node) bool {
 // param: id to find
 // returns: pointer to node, bool if found
 func (t *Tree) Find(id string) (*Node, bool) {
+	t.mux.RLock()
+	defer t.mux.RUnlock()
+
 	return treeFind(id, t.nodes)
 }
 func treeFind(id string, children []*Node) (*Node, bool) {
@@ -51,6 +60,9 @@ func treeFind(id string, children []*Node) (*Node, bool) {
 }
 
 func (t *Tree) FindParent(id string) (*Node, bool) {
+	t.mux.RLock()
+	defer t.mux.RUnlock()
+
 	for _, node := range t.nodes {
 		if node.ID == id {
 			return node, true
@@ -90,6 +102,8 @@ func treeFindParent(id string, parent *Node) (*Node, bool) {
 // returns: bool if successful
 // note: if moving, Attach new before Detach old
 func (t *Tree) Detach(id string) bool {
+	t.mux.Lock()
+	defer t.mux.Unlock()
 
 	if parentNode, ok := t.FindParent(id); ok {
 		//fmt.Printf("found parent %v\n", parentNode)

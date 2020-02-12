@@ -76,6 +76,8 @@ func New(cachePath string, init bool) (*Store, error) {
 }
 
 func (st *Store) loadSettings() error {
+	st.mux.Lock()
+	defer st.mux.Unlock()
 
 	// read file
 	data, err := ioutil.ReadFile(st.cachePath + SETTINGSFILE)
@@ -124,6 +126,8 @@ func (st *Store) ExistsTree() bool {
 }
 
 func (st *Store) loadTree() error {
+	st.mux.RLock()
+	defer st.mux.RUnlock()
 
 	// read file
 	data, err := ioutil.ReadFile(st.cachePath + TREEFILE)

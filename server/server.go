@@ -3,6 +3,8 @@ package server
 import (
 	"mime"
 	"net/http"
+	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/gin-contrib/cors"
@@ -65,23 +67,37 @@ func (sv *Server) Listen(ip string, port string, debug bool) {
 		r.Use(cors.New(config))
 	}
 
+	api := sv.r.Group("/api/v1/riconotes/")
 	// display tree
-	r.GET("/", sv.getTree)
+	api.GET("/", sv.getTree)
 
 	// add new parent to tree
-	r.POST("/", sv.insertTreeParent)
+	api.POST("/", sv.insertTreeParent)
 	// add new child to tree
-	r.POST("/:id/child", sv.insertTreeChild)
+	api.POST("/:id/child", sv.insertTreeChild)
 
 	// display node content
-	r.GET("/:id", sv.getNode)
+	api.GET("/:id", sv.getNode)
 	// update node content
-	r.PUT("/:id", sv.checkContentType, sv.putNode)
+	api.PUT("/:id", sv.checkContentType, sv.putNode)
 	// remove node content
-	r.DELETE("/:id", sv.deleteNode)
+	api.DELETE("/:id", sv.deleteNode)
 
 	// update tree info (node title, node expand)
-	r.PATCH("/:id", sv.checkContentType, sv.patchNode)
+	api.PATCH("/:id", sv.checkContentType, sv.patchNode)
+
+	sv.r.NoRoute(func(ctx *gin.Context) {
+		dir, file := path.Split(ctx.Request.RequestURI)
+		ext := filepath.Ext(file)
+		root := "./ui/build"
+
+		if file == "" || ext == "" {
+			ctx.File(root + "/index.html")
+		} else {
+			ctx.File(path.Join(root, dir, file))
+		}
+
+	})
 
 	r.Run(ip + ":" + port) // listen and serve
 }

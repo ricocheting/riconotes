@@ -43,7 +43,7 @@ class App extends Component {
 		fetch(settings.API_ENDPOINT)
 			.then((result) => result.json())
 			.then((result) => {
-				this.expandedKeys(result.tree);
+				this.expandedKeys(result.payload.tree);
 				let activeTabID = null,
 					activeTreeID = null,
 					content = "",
@@ -55,19 +55,19 @@ class App extends Component {
 					// if we pulled a TabID
 					activeTabID = location[0];
 					callback = this.displayNodeHash(location[1]); // display the content for this activeTreeID
-				} else if (result.tree.length > 0) {
+				} else if (result.payload.tree.length > 0) {
 					// default to the first tab
 					// default to the first tab
-					if (result.tree[0].children.length > 0) {
-						activeTreeID = result.tree[0].children[0].id;
+					if (result.payload.tree[0].children.length > 0) {
+						activeTreeID = result.payload.tree[0].children[0].id;
 					}
 
-					activeTabID = result.tree[0].id;
-					content = result.content;
+					activeTabID = result.payload.tree[0].id;
+					content = result.payload.content;
 				}
 
 				this.setState(
-					{ masterTree: result.tree, activeTabID: activeTabID, activeTreeID: activeTreeID, content: content },
+					{ masterTree: result.payload.tree, activeTabID: activeTabID, activeTreeID: activeTreeID, content: content },
 					() => callback
 				);
 			});
@@ -99,8 +99,7 @@ class App extends Component {
 		});
 
 		// change the location. which triggers the handleNewHash() listener assigned in componentDidMount() which triggers displayNodeHash()
-		window.location.href =
-			window.location.href.replace(/#(.*)$/, "") + "#" + this.state.activeTabID + "/" + id + "/" + title;
+		window.location.href = window.location.href.replace(/#(.*)$/, "") + "#" + this.state.activeTabID + "/" + id + "/" + title;
 	};
 
 	// query the API to pull the content for this ID
@@ -112,9 +111,7 @@ class App extends Component {
 				if (response.ok) {
 					return response.json();
 				} else {
-					throw new Error(
-						"ERROR: with displayNode() fetch. Status: " + response.status + ". Text: " + response.statusText
-					);
+					throw new Error("ERROR: with displayNode() fetch. Status: " + response.status + ". Text: " + response.statusText);
 				}
 			})
 			.then((data) => {
@@ -144,7 +141,7 @@ class App extends Component {
 		fetch(url, {
 			method: "DELETE",
 			headers: {
-				Accept: "application/json",
+				"Accept": "application/json",
 				"Content-Type": "application/json",
 			},
 		})
@@ -152,9 +149,7 @@ class App extends Component {
 				if (response.ok) {
 					return response.json();
 				} else {
-					throw new Error(
-						"ERROR: with deleteNode() fetch. Status: " + response.status + ". Text: " + response.statusText
-					);
+					throw new Error("ERROR: with deleteNode() fetch. Status: " + response.status + ". Text: " + response.statusText);
 				}
 			})
 			.then((data) => {
@@ -208,7 +203,7 @@ class App extends Component {
 		fetch(url, {
 			method: "PUT",
 			headers: {
-				Accept: "application/json",
+				"Accept": "application/json",
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
@@ -219,12 +214,7 @@ class App extends Component {
 				if (response.ok) {
 					return response.json();
 				} else {
-					throw new Error(
-						"ERROR: with saveNodeTitle() fetch. Status: " +
-							response.status +
-							". Text: " +
-							response.statusText
-					);
+					throw new Error("ERROR: with saveNodeTitle() fetch. Status: " + response.status + ". Text: " + response.statusText);
 				}
 			})
 			.then((data) => {
@@ -261,7 +251,7 @@ class App extends Component {
 		fetch(url, {
 			method: "PUT",
 			headers: {
-				Accept: "application/json",
+				"Accept": "application/json",
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
@@ -272,12 +262,7 @@ class App extends Component {
 				if (response.ok) {
 					return response.json();
 				} else {
-					throw new Error(
-						"ERROR: with saveNodeExpand() fetch. Status: " +
-							response.status +
-							". Text: " +
-							response.statusText
-					);
+					throw new Error("ERROR: with saveNodeExpand() fetch. Status: " + response.status + ". Text: " + response.statusText);
 				}
 			})
 			.then((data) => {
@@ -296,7 +281,7 @@ class App extends Component {
 		fetch(url, {
 			method: "POST",
 			headers: {
-				Accept: "application/json",
+				"Accept": "application/json",
 				"Content-Type": "application/json",
 			},
 		})
@@ -304,12 +289,7 @@ class App extends Component {
 				if (response.ok) {
 					return response.json();
 				} else {
-					throw new Error(
-						"ERROR: with addChildNode() fetch. Status: " +
-							response.status +
-							". Text: " +
-							response.statusText
-					);
+					throw new Error("ERROR: with addChildNode() fetch. Status: " + response.status + ". Text: " + response.statusText);
 				}
 			})
 			.then((data) => {
@@ -363,7 +343,7 @@ class App extends Component {
 		fetch(url, {
 			method: "POST",
 			headers: {
-				Accept: "application/json",
+				"Accept": "application/json",
 				"Content-Type": "application/json",
 			},
 		})
@@ -371,12 +351,7 @@ class App extends Component {
 				if (response.ok) {
 					return response.json();
 				} else {
-					throw new Error(
-						"ERROR: with addParentNode() fetch. Status: " +
-							response.status +
-							". Text: " +
-							response.statusText
-					);
+					throw new Error("ERROR: with addParentNode() fetch. Status: " + response.status + ". Text: " + response.statusText);
 				}
 			})
 			.then((data) => {

@@ -111,6 +111,7 @@ func (sv *Server) patchNode(c *gin.Context) {
 	c.JSON(http.StatusOK, out)
 }
 
+// deleteNode from tree and content file
 func (sv *Server) deleteNode(c *gin.Context) {
 	id := c.Param("id")
 

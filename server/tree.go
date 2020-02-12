@@ -7,7 +7,7 @@ import (
 	"github.com/ricocheting/riconotes/storage"
 )
 
-func (sv *Server) getRoot(c *gin.Context) {
+func (sv *Server) getTree(c *gin.Context) {
 	id := c.DefaultQuery("id", "")
 
 	tree := sv.store.Tree()
@@ -52,7 +52,7 @@ func (sv *Server) getRoot(c *gin.Context) {
 	c.JSON(http.StatusOK, out)
 }
 
-func (sv *Server) insertChild(c *gin.Context) {
+func (sv *Server) insertTreeChild(c *gin.Context) {
 	parentID := c.Param("id")
 
 	// get next available ID
@@ -94,7 +94,7 @@ func (sv *Server) insertChild(c *gin.Context) {
 	c.JSON(http.StatusOK, out)
 }
 
-func (sv *Server) insertParent(c *gin.Context) {
+func (sv *Server) insertTreeParent(c *gin.Context) {
 
 	// get next available ID
 	nextID := sv.store.Settings().GetID()

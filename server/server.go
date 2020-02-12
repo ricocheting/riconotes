@@ -65,29 +65,28 @@ func (sv *Server) Listen(ip string, port string, debug bool) {
 		r.Use(cors.New(config))
 	}
 
-	// list tree
-	r.GET("/", sv.getRoot)
+	// display tree
+	r.GET("/", sv.getTree)
 
-	// add new parent node addParentNode
-	r.POST("/", sv.checkContentType, sv.insertParent)
+	// add new parent to tree
+	r.POST("/", sv.insertTreeParent)
+	// add new child to tree
+	r.POST("/:id/child", sv.insertTreeChild)
 
-	// add new child node
-	r.POST("/:id/child", sv.insertChild)
-
-	// display node (content)
+	// display node content
 	r.GET("/:id", sv.getNode)
-	// remove node (content)
-	r.DELETE("/:id", sv.deleteNode)
-	// update node (content)
+	// update node content
 	r.PUT("/:id", sv.checkContentType, sv.putNode)
+	// remove node content
+	r.DELETE("/:id", sv.deleteNode)
 
-	// update node tree info (title, expand)
+	// update tree info (node title, node expand)
 	r.PATCH("/:id", sv.checkContentType, sv.patchNode)
 
 	r.Run(ip + ":" + port) // listen and serve
 }
 
-// checkContentType() makes sure the request (usually POST or PUT) data is "Content-Type: application/json; charset=utf-8"
+// checkContentType() makes sure the request (usually POST, PATCH, or PUT) data is "Content-Type: application/json; charset=utf-8"
 func (sv *Server) checkContentType(ctx *gin.Context) {
 	contentType := strings.ToLower(ctx.Request.Header.Get("Content-Type"))
 	var valid = false

@@ -21,10 +21,6 @@ type Store struct {
 	mux sync.RWMutex
 }
 
-type Settings struct {
-	NextID int64 `json:"nextID"`
-}
-
 // New instance of Store. load the tree and the settings from the flat files
 func New(cachePath string, init bool) (*Store, error) {
 

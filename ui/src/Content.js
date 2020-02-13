@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { settings } from "./Settings";
+import Api from "./Api";
 import { Modal, Button, Empty, message } from "antd";
 import ReactMarkdown from "react-markdown";
 
@@ -263,38 +263,19 @@ class Content extends Component {
 		});
 	};
 
-	saveContent = () => {
-		// update the API
-		const url = settings.API_ENDPOINT + this.state.id;
+	saveContent = async () => {
+		const result = await Api.putNode(this.state.content);
 
-		fetch(url, {
-			method: "PUT",
-			headers: {
-				"Accept": "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				content: this.state.content,
-			}),
-		})
-			.then((response) => {
-				return response.json();
-			})
-			.then((data) => {
-				if (data["msg"]) {
-					//id,content,msg
-					message.success(data["msg"]);
-				}
+		if (result.status === "success") {
+			message.success(result.message);
 
-				// change it to the tab they passed in as the key parameter
-				this.setState({
-					modalEditVisible: false,
-				});
-			})
-			.catch((error) => {
-				//console.log('ERROR: with saveContent() fetch\n\n', error.message);
-				message.error("ERROR: with saveContent() fetch.");
+			// change it to the tab they passed in as the key parameter
+			this.setState({
+				modalEditVisible: false,
 			});
+		} else {
+			message.error(result.message);
+		}
 	};
 
 	// controls display for "Code"

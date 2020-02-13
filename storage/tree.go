@@ -13,8 +13,8 @@ func (t *Tree) Attach(parentID string, n *Node) bool {
 	t.mux.Lock()
 	defer t.mux.Unlock()
 
-	if parentNode, ok := t.Find(parentID); ok {
-		parentNode.Children = append(parentNode.Children, n)
+	if node, _ := t.find(parentID); node != nil {
+		node.Children = append(node.Children, n)
 		return true
 	}
 
@@ -29,104 +29,92 @@ func (t *Tree) CreateParent(n *Node) bool {
 	return true
 }
 
-// desc: crawls tree and returns pointer to the node to edit
-// param: id to find
-// returns: pointer to node, bool if found
+// Find() returns: pointer to node, bool if found
 func (t *Tree) Find(id string) (*Node, bool) {
 	t.mux.RLock()
-	defer t.mux.RUnlock()
+	node, _ := t.find(id)
+	t.mux.RUnlock()
 
-	return treeFind(id, t.nodes)
-}
-func treeFind(id string, children []*Node) (*Node, bool) {
-
-	for _, node := range children {
-		if node.ID == id {
-			return node, true
-		}
-
-		// crawl if node has children
-		idReturn, cReturn := &Node{}, false
-		if node.HasChildren() {
-			idReturn, cReturn = treeFind(id, node.Children)
-		}
-
-		if cReturn {
-			return idReturn, cReturn
-		}
-	}
-
-	return &Node{}, false
+	return node, node != nil
 }
 
-func (t *Tree) FindParent(id string) (*Node, bool) {
-	t.mux.RLock()
-	defer t.mux.RUnlock()
-
+// find() returns: (node, parent) node may be nil if not found. parent will be nil if node is top parent. no locking
+func (t *Tree) find(id string) (*Node, *Node) {
 	for _, node := range t.nodes {
 		if node.ID == id {
-			return node, true
+			return node, nil
 		}
 
-		cNode, cReturn := treeFindParent(id, node)
+		nReturn, pReturn := nfind(id, node)
 
-		if cReturn {
-			return cNode, cReturn
+		if nReturn != nil {
+			return nReturn, pReturn
 		}
 	}
 
-	return &Node{}, false
+	return nil, nil
 }
-func treeFindParent(id string, parent *Node) (*Node, bool) {
+
+// nfind() returns: (node, parent) both will be nil if not found
+func nfind(id string, parent *Node) (*Node, *Node) {
 
 	for _, node := range parent.Children {
 		if node.ID == id {
-			return parent, true
+			return node, parent
 		}
 
 		// crawl if node has children
-		idReturn, cReturn := &Node{}, false
+		var nReturn *Node = nil
+		var pReturn *Node = nil
 		if node.HasChildren() {
-			idReturn, cReturn = treeFindParent(id, node)
+			nReturn, pReturn = nfind(id, node)
 		}
 
-		if cReturn {
-			return idReturn, cReturn
+		if nReturn != nil || pReturn != nil {
+			return nReturn, pReturn
 		}
 	}
 
-	return &Node{}, false
+	return nil, nil
 }
 
-// param: node id
-// returns: bool if successful
-// note: if moving, Attach new before Detach old
 func (t *Tree) Detach(id string) bool {
 	t.mux.Lock()
 	defer t.mux.Unlock()
 
-	if parentNode, ok := t.FindParent(id); ok {
-		//fmt.Printf("found parent %v\n", parentNode)
+	node, parent := t.find(id)
 
-		if i := parentNode.ChildIndex(id); i > -1 {
-			copy(parentNode.Children[i:], parentNode.Children[i+1:])
-			parentNode.Children[len(parentNode.Children)-1] = nil
-			parentNode.Children = parentNode.Children[:len(parentNode.Children)-1]
+	if parent != nil {
+		// has parent, remove from parent.Children
+
+		if i := parent.ChildIndex(id); i > -1 {
+			copy(parent.Children[i:], parent.Children[i+1:])
+			parent.Children[len(parent.Children)-1] = nil
+			parent.Children = parent.Children[:len(parent.Children)-1]
 			return true
 		}
 
+	} else if node != nil {
+		// node found, but no parent. try remove directly from tree
+
+		for i, node := range t.nodes {
+			if node.ID == id {
+				copy(t.nodes[i:], t.nodes[i+1:])
+				t.nodes[len(t.nodes)-1] = nil
+				t.nodes = t.nodes[:len(t.nodes)-1]
+				return true
+			}
+		}
 	}
 
 	return false
 }
 
-// param: node id
-// returns: bool
 func (t *Tree) HasChildren(id string) bool {
 	t.mux.RLock()
 	defer t.mux.RUnlock()
 
-	if node, ok := t.Find(id); ok {
+	if node, _ := t.find(id); node != nil {
 		return node.HasChildren()
 	}
 

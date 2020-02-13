@@ -47,7 +47,10 @@ func (sv *Server) putNode(c *gin.Context) {
 		return
 	}
 
-	sv.store.Update(id, req.Content)
+	if err := sv.store.Update(id, req.Content); err != nil {
+		sv.returnError(c, http.StatusUnprocessableEntity, "Could not save file ID: "+id, err.Error())
+		return
+	}
 
 	payload := struct {
 		Content string `json:"content"`

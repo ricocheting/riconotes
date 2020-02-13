@@ -22,14 +22,7 @@ var (
 	reValidID = regexp.MustCompile(`^\d{4,}$`)
 )
 
-/*func (st *Store) Insert(n *Node) {
-}*/
-
-/*func (st *Store) Delete() {
-
-}*/
-
-// Update() the node content
+// Update() or create the node content
 func (st *Store) Update(id string, content string) error {
 	filename, ok := st.FilePath(id)
 
@@ -37,9 +30,9 @@ func (st *Store) Update(id string, content string) error {
 		return errors.New("ID " + id + " is not valid")
 	}
 
-	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		return errors.New("file " + filename + " does not exist")
-	}
+	// if _, err := os.Stat(filename); os.IsNotExist(err) {
+	// 	return errors.New("file " + filename + " does not exist")
+	// }
 
 	if err := ioutil.WriteFile(filename, []byte(content), filemode); err != nil {
 		return err

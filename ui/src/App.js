@@ -265,7 +265,7 @@ class App extends Component {
 			// success
 			const newNode = result.payload.node;
 			newNode.editing = true;
-			this.setState({ tree: [...this.state.masterTree, newNode] });
+			this.setState({ masterTree: [...this.state.masterTree, newNode] });
 		} else {
 			message.error(result.message);
 		}

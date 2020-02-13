@@ -46,8 +46,8 @@ class Tabs extends Component {
 				<div className="tabs-add" onClick={this.toggleLock}>
 					<Icon type={this.state.locked ? "lock" : "unlock"} />
 				</div>
-				<div className="tabs-add" hidden={this.state.locked}>
-					<Button onClick={this.props.addParentNode} size="small" type="primary" style={{ zIndex: -1 }}>
+				<div className="tabs-add" hidden={this.state.locked} onClick={this.props.addParentNode}>
+					<Button size="small" type="primary" style={{ zIndex: -1 }}>
 						<Icon type="plus-circle" />
 						Add Tab
 					</Button>

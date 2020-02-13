@@ -78,9 +78,11 @@ func (sv *Server) insertTreeChild(c *gin.Context) {
 	}
 
 	payload := struct {
-		Tree []*storage.Node `json:"tree"`
+		Tree     []*storage.Node `json:"tree"`
+		NodeTree *storage.Node   `json:"node"`
 	}{
 		sv.store.Tree().List(),
+		node,
 	}
 
 	out := Response{
@@ -119,9 +121,11 @@ func (sv *Server) insertTreeParent(c *gin.Context) {
 	}
 
 	payload := struct {
-		Tree []*storage.Node `json:"tree"`
+		Tree     []*storage.Node `json:"tree"`
+		NodeTree *storage.Node   `json:"node"`
 	}{
 		sv.store.Tree().List(),
+		node,
 	}
 
 	out := Response{

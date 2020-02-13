@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	cachePath := flag.String("cache", "./", "Folder where cache files are stored")
+	cachePath := flag.String("cache", "./cache/", "Folder where cache files are stored")
 	port := flag.String("port", "9000", "Port number to bind to")
 	ip := flag.String("ip", "", "IP to bind to")
 	debug := flag.Bool("debug", false, "Whether to send CORS headers")

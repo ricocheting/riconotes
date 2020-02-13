@@ -1,0 +1,29 @@
+{
+	"name": "riconotes",
+	"version": "0.2.0",
+	"private": true,
+	"dependencies": {
+		"antd": "^3.25.1",
+		"core-js": "^3.4.0",
+		"react": "^16.12.0",
+		"react-dom": "^16.11.0",
+		"react-markdown": "^4.3.1",
+		"react-scripts": "2.1.1"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eject": "react-scripts eject"
+	},
+	"eslintConfig": {
+		"extends": "react-app"
+	},
+	"browserslist": [
+		">0.2%",
+		"chrome 44",
+		"not ie <= 11",
+		"not op_mini all"
+	],
+	"proxy": "http://localhost:9000"
+}

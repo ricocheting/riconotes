@@ -264,7 +264,7 @@ class Content extends Component {
 	};
 
 	saveContent = async () => {
-		const result = await Api.putNode(this.state.content);
+		const result = await Api.putNode(this.state.id, this.state.content);
 
 		if (result.status === "success") {
 			message.success(result.message);

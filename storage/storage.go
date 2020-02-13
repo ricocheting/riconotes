@@ -39,23 +39,27 @@ func New(cachePath string, init bool) (*Store, error) {
 			}
 			if !existsTree {
 				st.tree = &Tree{nodes: []*Node{}}
-				nextID := fmt.Sprintf("%04d", st.Settings().NextID)
+				tabID := st.Settings().GetID()
+				st.Settings().IncrementID()
+				childID := st.Settings().GetID()
+				st.Settings().IncrementID()
 
-				//attach it to the parent
-				node := &Node{
-					ID:       nextID,
-					Title:    "New Parent " + nextID,
-					Children: []*Node{},
+				nodeTab := &Node{
+					ID:    tabID,
+					Title: "Tab " + tabID,
+					Children: []*Node{&Node{
+						ID:       childID,
+						Title:    "Item " + childID,
+						Children: []*Node{},
+					}},
 				}
 
 				// try to attach new node to parent
-				if ok := st.Tree().CreateParent(node); ok {
-					// increment the next available ID and save settings file
-					st.Settings().NextID = st.Settings().NextID + 1
+				if ok := st.Tree().CreateParent(nodeTab); ok {
 					st.SaveSettings()
-
-					// save the tree changes
 					st.SaveTree()
+				} else {
+					return st, fmt.Errorf("could not initilize tree")
 				}
 			}
 

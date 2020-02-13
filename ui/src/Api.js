@@ -1,5 +1,5 @@
 export const Setting = {
-	API_ENDPOINT: "http://localhost:8080/api/v1/riconotes", // do NOT include trailing slash. can be full http path if needed
+	API_ENDPOINT: "/api/v1/riconotes", // do NOT include trailing slash. can be full http path if needed
 };
 
 // NOTE: anything run through here assumes you already error checked it
@@ -10,7 +10,6 @@ class Api {
 			headers: {
 				"Accept": "application/json",
 				"Content-Type": "application/json",
-				"X-ProfileID": Setting.PROFILE_ID,
 			},
 			body: body != null ? JSON.stringify(body) : undefined,
 			...extraParam,
@@ -58,6 +57,7 @@ class Api {
 		const body = {
 			content: content,
 		};
+		console.log("PUT", url, body);
 
 		return this.myFetch(url, "PUT", body);
 	}

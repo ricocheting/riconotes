@@ -29,11 +29,6 @@ func (sv *Server) getTree(c *gin.Context) {
 		content, err = sv.store.Load(id)
 	}
 
-	if err != nil {
-		sv.returnError(c, http.StatusNotFound, "Node ID was not found in database: "+id, err.Error())
-		return
-	}
-
 	payload := struct {
 		Tree    []*storage.Node `json:"tree"`
 		Content string          `json:"content"`
@@ -47,6 +42,10 @@ func (sv *Server) getTree(c *gin.Context) {
 		Status:  "success",
 		Message: "Successfully listed tree",
 		Payload: payload,
+	}
+
+	if err != nil {
+		out.Message = "Default Node ID was not found in database: " + id
 	}
 
 	c.JSON(http.StatusOK, out)

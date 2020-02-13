@@ -16,13 +16,19 @@ func (sv *Server) getNode(c *gin.Context) {
 	}
 
 	// node exists, but content file might not
-	node, err := sv.store.Load(id)
+	content, err := sv.store.Load(id)
+
+	payload := struct {
+		Content string `json:"content"`
+	}{
+		content,
+	}
 
 	out := Response{
 		Code:    http.StatusOK,
 		Status:  "success",
 		Message: "Successfully retrieved node: " + id,
-		Payload: node,
+		Payload: payload,
 	}
 
 	if err != nil {

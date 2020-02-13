@@ -106,10 +106,11 @@ class App extends Component {
 
 	// query the API to pull the content for this ID
 	displayNodeHash = async (id) => {
-		const result = await Api.getNode();
+		const result = await Api.getNode(id);
 
 		if (result.status === "success") {
-			this.setState({ activeTreeID: id, content: result.payload.content });
+			const content = result.payload.content ? result.payload.content : "";
+			this.setState({ activeTreeID: id, content: content });
 		} else {
 			message.error(result.message);
 			this.setState({ activeTreeID: id, content: "" });
@@ -216,7 +217,7 @@ class App extends Component {
 
 		if (result.status === "success") {
 			// success
-			const newNode = result.payload.node;
+			let newNode = result.payload.node;
 			newNode.editing = true;
 
 			// find the matching node and add child

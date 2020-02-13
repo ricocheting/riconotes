@@ -141,7 +141,7 @@ func (sv *Server) deleteNode(c *gin.Context) {
 	out := Response{
 		Code:    http.StatusOK,
 		Status:  "success",
-		Message: "Successfully detaching node: " + id,
+		Message: "Successfully detached node: " + id,
 		Payload: sv.store.Tree().List(),
 	}
 

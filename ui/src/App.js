@@ -130,7 +130,7 @@ class App extends Component {
 
 	//#######################################
 	deleteNode = async (id) => {
-		const result = await Api.deleteNode();
+		const result = await Api.deleteNode(id);
 
 		if (result.status === "success") {
 			/*const newTree = this.state.masterTree.filter((element, i) => {
@@ -225,8 +225,8 @@ class App extends Component {
 
 			newTree.map((node, key) => {
 				let matched = this.searchTree(node, id);
-
 				if (matched !== null) {
+					matched.expand = true;
 					matched.children = [...matched.children, newNode];
 				} else {
 					matched = node;
@@ -263,7 +263,7 @@ class App extends Component {
 
 		if (result.status === "success") {
 			// success
-			const newNode = result.payload.node;
+			let newNode = result.payload.node;
 			newNode.editing = true;
 			this.setState({ masterTree: [...this.state.masterTree, newNode] });
 		} else {

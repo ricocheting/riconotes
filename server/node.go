@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ricocheting/riconotes/storage"
 )
 
 func (sv *Server) getNode(c *gin.Context) {
@@ -144,11 +145,17 @@ func (sv *Server) deleteNode(c *gin.Context) {
 	// delete the content file (if it exists)
 	sv.store.Delete(id)
 
+	payload := struct {
+		Tree []*storage.Node `json:"tree"`
+	}{
+		sv.store.Tree().List(),
+	}
+
 	out := Response{
 		Code:    http.StatusOK,
 		Status:  "success",
 		Message: "Successfully detached node: " + id,
-		Payload: sv.store.Tree().List(),
+		Payload: payload,
 	}
 
 	c.JSON(http.StatusOK, out)

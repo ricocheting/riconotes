@@ -3,6 +3,8 @@ package server
 import (
 	"mime"
 	"net/http"
+	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/gin-contrib/cors"
@@ -84,7 +86,7 @@ func (sv *Server) Listen(ip string, port string, debug bool) {
 	// update tree info (node title, node expand)
 	api.PATCH("/:id", sv.checkContentType, sv.patchNode)
 
-	/*	sv.r.NoRoute(func(ctx *gin.Context) {
+	sv.r.NoRoute(func(ctx *gin.Context) {
 		dir, file := path.Split(ctx.Request.RequestURI)
 		ext := filepath.Ext(file)
 		root := "./ui/build"
@@ -95,7 +97,7 @@ func (sv *Server) Listen(ip string, port string, debug bool) {
 			ctx.File(path.Join(root, dir, file))
 		}
 
-	})*/
+	})
 
 	r.Run(ip + ":" + port) // listen and serve
 }

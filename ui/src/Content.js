@@ -78,10 +78,10 @@ class Content extends Component {
 			modalPasteVisible: false,
 		});
 
-		let paste = this.state.pasteText;
-		paste = paste.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+		// turn HTML into markdown
+		const result = this.state.pasteText.replace(/<a href="([^"]+)">([^<]+)<\/a>/g, "[$2]($1)");
 
-		this.editInsert(paste, "");
+		this.editInsert(result, "");
 	};
 	pasteModalChangeContent = (e) => {
 		const { value } = e.target;
@@ -386,7 +386,7 @@ class Content extends Component {
 					<ButtonGroup className="contentFormatContainer" style={{ marginLeft: "15px" }}>
 						<Button
 							onClick={this.pasteModalShow}
-							title="Insert HTML Snippet"
+							title="Convert HTML Links to markdown"
 							icon="snippets"
 							style={{ borderColor: "black" }}></Button>
 					</ButtonGroup>

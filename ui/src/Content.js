@@ -403,7 +403,19 @@ class Content extends Component {
 								onKeyDown={this.editKeyDown}
 							/>
 						</div>
-						<ReactMarkdown className="contentCode" source={this.state.content} />
+						<ReactMarkdown
+							className="contentCode"
+							source={this.state.content}
+							renderers={{
+								linkReference: (reference) => {
+									if (!reference.href) {
+										return <span>[ ${reference.children[0]} ]</span>;
+									}
+
+									return <a href={reference.$ref}>{reference.children}</a>;
+								},
+							}}
+						/>
 					</div>
 				</Modal>
 			</div>

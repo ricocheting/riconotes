@@ -5,20 +5,19 @@ import ReactMarkdown from "react-markdown";
 
 const ButtonGroup = Button.Group;
 
-function commenter() {
-	/*return (tree) => {
-		//console.log(tree);
+const renderers = {
+	// fix for react-markdown tries to link anything in brackets
+	// https://github.com/rexxars/react-markdown/issues/115
+	// https://github.com/rexxars/react-markdown/issues/218
+	// https://github.com/rexxars/react-markdown/issues/276
+	linkReference: (reference) => {
+		if (!reference.href) {
+			return <span>[${reference.children[0]}]</span>;
+		}
 
-		// this needs to be recursive if(node.children.length>0)
-		tree.children.forEach((node, index, parent) => {
-			console.log(node, index, parent);
-			if (node.type === "code" || node.type === "inlineCode") {
-				//content = content.replace(/(?:(\n|[^:]))(\/\/[^\n]+)/g, '$1<span class="comment">$2</span>'); // comment but not :// in links
-			}
-		});
-		return tree;
-	};*/
-}
+		return <a href={reference.$ref}>{reference.children}</a>;
+	},
+};
 
 class Content extends Component {
 	constructor(props) {
@@ -320,7 +319,7 @@ class Content extends Component {
 				</div>
 
 				{this.state.content.length > 0 ? (
-					<ReactMarkdown className="contentCode" source={this.state.content} plugins={[commenter]} />
+					<ReactMarkdown className="contentCode" source={this.state.content} renderers={renderers} />
 				) : (
 					<Empty description={<span>No text entered</span>} />
 				)}
@@ -403,19 +402,7 @@ class Content extends Component {
 								onKeyDown={this.editKeyDown}
 							/>
 						</div>
-						<ReactMarkdown
-							className="contentCode"
-							source={this.state.content}
-							renderers={{
-								linkReference: (reference) => {
-									if (!reference.href) {
-										return <span>[ ${reference.children[0]} ]</span>;
-									}
-
-									return <a href={reference.$ref}>{reference.children}</a>;
-								},
-							}}
-						/>
+						<ReactMarkdown className="contentCode" source={this.state.content} renderers={renderers} />
 					</div>
 				</Modal>
 			</div>

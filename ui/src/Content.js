@@ -11,8 +11,10 @@ const renderers = {
 	// https://github.com/rexxars/react-markdown/issues/218
 	// https://github.com/rexxars/react-markdown/issues/276
 	linkReference: (reference) => {
+		// linkReference: (reference: Object): Node => {
 		if (!reference.href) {
-			return <span>[${reference.children[0]}]</span>;
+			//return `[${reference.children[0].props.children}]`;
+			return <>[{reference.children[0]}]</>;
 		}
 
 		return <a href={reference.$ref}>{reference.children}</a>;

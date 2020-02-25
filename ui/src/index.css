@@ -127,8 +127,10 @@ ul.tabs li .icons-list{
 	margin-left:20px;
 	overflow-y:scroll;
 }
-.contentFormatContainer{
-	margin:0 5px 8px 0;
+@media (max-width: 992px) {
+	.contentBlock .contentCode{
+		display:none;
+	}
 }
 
 pre {

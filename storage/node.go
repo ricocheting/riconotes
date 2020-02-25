@@ -16,6 +16,7 @@ type Node struct {
 
 const (
 	filemode = os.FileMode(0644)
+	fileext  = ".md"
 )
 
 var (
@@ -80,7 +81,7 @@ func (st *Store) FilePath(id string) (string, bool) {
 		return "", false
 	}
 
-	return st.cachePath + id + ".html", true
+	return st.cachePath + id + fileext, true
 }
 
 // FirstChild() of node

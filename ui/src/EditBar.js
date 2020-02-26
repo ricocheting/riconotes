@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Popconfirm, Button, Input, Checkbox, Icon } from "antd";
 
-const ButtonGroup = Button.Group;
 const InputGroup = Input.Group;
 
 const Expand = (props) => {
@@ -10,11 +9,9 @@ const Expand = (props) => {
 	}
 
 	return (
-		<div style={{ marginLeft: "20px" }}>
-			<Checkbox onChange={props.onExpand} checked={props.expand}>
-				Expanded
-			</Checkbox>
-		</div>
+		<Checkbox onChange={props.onExpand} checked={props.expand}>
+			Expanded
+		</Checkbox>
 	);
 };
 class EditBar extends Component {
@@ -111,40 +108,34 @@ class EditBar extends Component {
 
 		return (
 			<div className="header-bar">
-				<div>
-					<div hidden={!this.state.editing}>
-						<InputGroup compact size="default">
-							<Input
-								value={this.state.title}
-								onChange={this.changeTitle}
-								onPressEnter={this.onSubmitTitle}
-								ref={this.lastInput}
-								style={{ width: 300 }}
-							/>
-							<Button onClick={this.onEditingCancel}>Cancel</Button>
-							<Button onClick={this.onSubmitTitle} type="primary">
-								Save
+				<div hidden={!this.state.editing}>
+					<InputGroup compact size="default">
+						<Popconfirm placement="bottomRight" title="Are you sure?" onConfirm={this.onDelete} okText="Yes" cancelText="No">
+							<Button title={"Edit node #" + this.props.node.id} type="danger" icon="delete">
+								Delete
 							</Button>
-						</InputGroup>
-					</div>
-					<h2 hidden={this.state.editing}>{this.state.title}</h2>
+						</Popconfirm>
+						<Input
+							value={this.state.title}
+							onChange={this.changeTitle}
+							onPressEnter={this.onSubmitTitle}
+							ref={this.lastInput}
+							style={{ width: 300 }}
+						/>
+						<Button onClick={this.onEditingCancel}>Cancel</Button>
+						<Button onClick={this.onSubmitTitle} type="primary" icon="save">
+							Save
+						</Button>
+					</InputGroup>
 				</div>
 
-				<ButtonGroup className={this.state.editing ? "hidden" : null} size="small">
-					<Button onClick={this.onEditing} title={"node #" + this.props.node.id}>
-						<Icon type="edit" />
-						Edit
-					</Button>
+				<div hidden={this.state.editing}>
+					<h2>{this.state.title}</h2>
 
-					<Popconfirm placement="bottomRight" title="Are you sure?" onConfirm={this.onDelete} okText="Yes" cancelText="No">
-						<Button title={"node #" + this.props.node.id}>
-							<Icon type="delete" />
-							Delete
-						</Button>
-					</Popconfirm>
-				</ButtonGroup>
+					<Icon type="edit" onClick={this.onEditing} title={"node #" + this.props.node.id} />
 
-				<Expand node={this.props.node} onExpand={this.onExpand} expand={this.state.expand} />
+					<Expand node={this.props.node} onExpand={this.onExpand} expand={this.state.expand} />
+				</div>
 			</div>
 		);
 	}

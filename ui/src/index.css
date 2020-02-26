@@ -78,10 +78,8 @@ ul.tab-bar li.lock{
 	border:1px solid gray;
 	min-height:60px;
 }
-.header-bar>div{
+.header-bar>div>*{
 	display:inline-block;
-}
-.header-bar h2{
 	margin:0 20px 0 0;
 }
 

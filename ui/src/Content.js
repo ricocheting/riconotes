@@ -321,7 +321,7 @@ class Content extends Component {
 				</div>
 
 				{this.state.content.length > 0 ? (
-					<ReactMarkdown className="contentCode" source={this.state.content} renderers={renderers} />
+					<ReactMarkdown className="markdown-body" source={this.state.content} renderers={renderers} />
 				) : (
 					<Empty description={<span>No text entered</span>} />
 				)}
@@ -404,7 +404,7 @@ class Content extends Component {
 								onKeyDown={this.editKeyDown}
 							/>
 						</div>
-						<ReactMarkdown className="contentCode" source={this.state.content} renderers={renderers} />
+						<ReactMarkdown className="markdown-body" source={this.state.content} renderers={renderers} />
 					</div>
 				</Modal>
 			</div>

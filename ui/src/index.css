@@ -120,15 +120,15 @@ ul.tabs li .icons-list{
 	display:flex;
 	height: calc(100vh - 200px);
 }
-.contentBlock .contentEdit, .contentBlock .contentCode{
+.contentBlock .contentEdit, .contentBlock .markdown-body{
 	flex:1;
 }
-.contentBlock .contentCode{
+.contentBlock .markdown-body{
 	margin-left:20px;
 	overflow-y:scroll;
 }
 @media (max-width: 992px) {
-	.contentBlock .contentCode{
+	.contentBlock .markdown-body{
 		display:none;
 	}
 }
@@ -136,50 +136,50 @@ ul.tabs li .icons-list{
 pre {
 	white-space: pre-wrap;
 }
-.contentCode pre{
+.markdown-body pre{
 	background-color:#eff0f1;
 	margin-bottom: 1em;
 	padding: 12px 8px;
 	width: auto;
 	border-radius: 3px;
 }
-.contentCode p code, .contentCode li code{
+.markdown-body p code, .markdown-body li code{
 	padding: 1px 5px;
 }
-.contentCode code{
+.markdown-body code{
 	color:#c51916;
 	background-color:#eff0f1;
 }
-.contentCode pre code{
+.markdown-body pre code{
 	color:#962e8f;
 }
-.contentCode .comment{
+.markdown-body .comment{
 	color:#008000;
 }
-.contentCode hr{
+.markdown-body hr{
 	height:0;
 	border:0;
 	border-top:1px dotted gray;
 }
-.contentCode b {
+.markdown-body b {
 	color: rgba(0,0,0,.80);
 }
 
 /* tables */
-.contentCode table tr {
+.markdown-body table tr {
 	background-color: #fff;
 	border-top: 1px solid #c6cbd1;
 }
-.contentCode table th {
+.markdown-body table th {
 	padding: 6px 13px;
 	border: 1px solid #dfe2e5;
 	font-weight: 600;
 }
-.contentCode table td, .contentCode table th {
+.markdown-body table td, .markdown-body table th {
 	padding: 6px 13px;
 	border: 1px solid #dfe2e5;
 }
-.contentCode table tr:nth-child(2n) {
+.markdown-body table tr:nth-child(2n) {
 	background-color: #f6f8fa;
 }
 

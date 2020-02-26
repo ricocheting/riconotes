@@ -249,10 +249,12 @@ class App extends Component {
 		});
 
 		if (node) {
-			this.setState({ activeTabID: id }, () => {
+			const activeTreeID = node.children.length > 0 ? node.children[0].id : null;
+
+			this.setState({ activeTabID: id, activeTreeID: activeTreeID }, () => {
 				// default to the first node in tab
-				if (node.children.length > 0) {
-					this.displayNode(node.children[0].id); // displayNode also sets state.activeTreeID
+				if (activeTreeID !== null) {
+					this.displayNode(activeTreeID); // displayNode also sets state.activeTreeID
 				}
 			});
 		}

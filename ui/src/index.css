@@ -164,6 +164,25 @@ pre {
 .contentCode b {
 	color: rgba(0,0,0,.80);
 }
+
+/* tables */
+.contentCode table tr {
+	background-color: #fff;
+	border-top: 1px solid #c6cbd1;
+}
+.contentCode table th {
+	padding: 6px 13px;
+	border: 1px solid #dfe2e5;
+	font-weight: 600;
+}
+.contentCode table td, .contentCode table th {
+	padding: 6px 13px;
+	border: 1px solid #dfe2e5;
+}
+.contentCode table tr:nth-child(2n) {
+	background-color: #f6f8fa;
+}
+
 .contentEdit textarea{
 	width:100%;
 	height:100%;

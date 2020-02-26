@@ -72,16 +72,16 @@ ul.tab-bar li.lock{
 }
 
 /* bar under the tabs for editing the current node */
-.tabBar{
+.header-bar{
 	background-color:white;
 	padding: 12px 50px 12px 20px;
 	border:1px solid gray;
 	min-height:60px;
 }
-.tabBar>div{
+.header-bar>div{
 	display:inline-block;
 }
-.tabBar h2{
+.header-bar h2{
 	margin:0 20px 0 0;
 }
 

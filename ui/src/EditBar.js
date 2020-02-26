@@ -106,11 +106,11 @@ class EditBar extends Component {
 
 		// display nothing if no valid node
 		if (node === null) {
-			return <div className="tabBar"></div>;
+			return <div className="header-bar"></div>;
 		}
 
 		return (
-			<div className="tabBar">
+			<div className="header-bar">
 				<div>
 					<div hidden={!this.state.editing}>
 						<InputGroup compact size="default">
@@ -136,12 +136,7 @@ class EditBar extends Component {
 						Edit
 					</Button>
 
-					<Popconfirm
-						placement="bottomRight"
-						title="Are you sure?"
-						onConfirm={this.onDelete}
-						okText="Yes"
-						cancelText="No">
+					<Popconfirm placement="bottomRight" title="Are you sure?" onConfirm={this.onDelete} okText="Yes" cancelText="No">
 						<Button title={"node #" + this.props.node.id}>
 							<Icon type="delete" />
 							Delete

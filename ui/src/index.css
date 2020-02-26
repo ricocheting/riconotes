@@ -20,44 +20,54 @@ body{
 }
 
 /* tab styles */
-ul.tabs{
+ul.tab-bar{
 	display:flex;
+	flex-wrap:wrap;
 	margin:0;
 	margin-left:8px;
 	padding:0;
+	list-style:none;
 }
-ul.tabs li{
-	background-color:rgba(231, 231, 231, 0.966);
+ul.tab-bar li.tab{
 	display:flex;
+	flex: 0 1;
+	background-color:rgba(231, 231, 231, 0.966);
 	border:1px solid gray;
 	border-bottom:0;
 	cursor: pointer;;
 	margin:0 4px 0 0;
+	padding: 4px 0;
 	border-radius:5px 5px 0 0;
 }
-ul.tabs li:hover{
+ul.tab-bar li.tab:hover{
 	background-color:white;
 	color:#1890ff;
 }
-ul.tabs li .title>div{/*so the title text expands full width of "tab" and there's not unclickable dead area on the sides; but the padding here*/
+ul.tab-bar li.tab .title>div{/*so the title text expands full width of "tab" and there's not unclickable dead area on the sides; but the padding here*/
 	padding: 0 10px;
+	white-space:nowrap;
 }
 
-ul.tabs li.active{
+ul.tab-bar li.tab.active{
 	background-color:white;
 	/*border-bottom:1px solid white;*/
 	color:#1890ff;
 	margin-bottom:-1px;
 }
-ul.tabs li .icons-list{
-	margin:0 8px 0 10px;/*negative right to make up for ul.tabs padding*/
+ul.tab-bar li.tab .icons-list{
+	margin:0 8px 0 10px;/*negative right to make up for ul.tab-bar padding*/
 	float:right;
 	cursor:pointer;
+	white-space:nowrap;
 }
-
-.tabs-add{
-	float:right;
-	margin-left:16px;
+ul.tab-bar li.add{
+	border-color:#0a4985;
+	background-color:#1890ff;
+	color:white;
+}
+ul.tab-bar li.lock{
+	flex: 1 0;
+	text-align:right;
 	cursor: pointer;
 }
 

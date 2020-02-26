@@ -42,19 +42,19 @@ class Tabs extends Component {
 		});
 
 		return (
-			<div>
-				<div className="tabs-add" onClick={this.toggleLock}>
+			<ul className="tab-bar">
+				{tabs}
+				<li className="tab add" hidden={this.state.locked} onClick={this.props.addParentNode}>
+					<div className="title">
+						<div>
+							Add Tab <Icon type="plus-circle" />
+						</div>
+					</div>
+				</li>
+				<li className="lock" onClick={this.toggleLock}>
 					<Icon type={this.state.locked ? "lock" : "unlock"} />
-				</div>
-				<div className="tabs-add" hidden={this.state.locked} onClick={this.props.addParentNode}>
-					<Button size="small" type="primary" style={{ zIndex: -1 }}>
-						<Icon type="plus-circle" />
-						Add Tab
-					</Button>
-				</div>
-
-				<ul className="tabs">{tabs}</ul>
-			</div>
+				</li>
+			</ul>
 		);
 	}
 }
@@ -106,9 +106,10 @@ class TabChild extends Component {
 
 	render() {
 		//const node = this.props.tree;
+		const cn = "tab" + (this.props.isActive ? " active" : "");
 
 		return (
-			<li className={this.props.isActive ? "active" : ""}>
+			<li className={cn}>
 				<div className="title">
 					<div hidden={!this.state.editing}>
 						<input

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Icon, Button } from "antd";
+import { Icon } from "antd";
 
 class Tabs extends Component {
 	constructor(props) {

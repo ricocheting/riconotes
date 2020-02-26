@@ -3,7 +3,7 @@ import { Popconfirm, Button, Input, Checkbox, Icon } from "antd";
 
 const InputGroup = Input.Group;
 
-const Expand = (props) => {
+const ExpandButton = (props) => {
 	if (props.node.children.length < 1) {
 		return null;
 	}
@@ -14,6 +14,21 @@ const Expand = (props) => {
 		</Checkbox>
 	);
 };
+
+const DeleteButton = (props) => {
+	if (props.node.children.length > 0) {
+		return null;
+	}
+
+	return (
+		<Popconfirm placement="bottomRight" title="Are you sure?" onConfirm={props.onDelete} okText="Yes" cancelText="No">
+			<Button title={"Delete node #" + props.node.id} type="danger" icon="delete">
+				Delete
+			</Button>
+		</Popconfirm>
+	);
+};
+
 class EditBar extends Component {
 	constructor(props) {
 		super(props);
@@ -110,11 +125,7 @@ class EditBar extends Component {
 			<div className="header-bar">
 				<div hidden={!this.state.editing}>
 					<InputGroup compact size="default">
-						<Popconfirm placement="bottomRight" title="Are you sure?" onConfirm={this.onDelete} okText="Yes" cancelText="No">
-							<Button title={"Edit node #" + this.props.node.id} type="danger" icon="delete">
-								Delete
-							</Button>
-						</Popconfirm>
+						<DeleteButton onDelete={this.onDelete} node={this.props.node} />
 						<Input
 							value={this.state.title}
 							onChange={this.changeTitle}
@@ -134,7 +145,7 @@ class EditBar extends Component {
 
 					<Icon type="edit" onClick={this.onEditing} title={"node #" + this.props.node.id} />
 
-					<Expand node={this.props.node} onExpand={this.onExpand} expand={this.state.expand} />
+					<ExpandButton node={this.props.node} onExpand={this.onExpand} expand={this.state.expand} />
 				</div>
 			</div>
 		);

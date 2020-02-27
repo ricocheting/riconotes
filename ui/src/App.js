@@ -114,7 +114,6 @@ class App extends Component {
 	getHash = () => {
 		var location = window.location.hash.replace(/^#\/?|\/$/g, "").split("/"); //hash looks like #0002/0263/Quicktext-more-whatever where #tabID/nodeID/Title
 		if (location.length > 0) {
-			console.log("getHash activeTabID:", this.state.activeTabID, "location:", location);
 			// tab changed
 			if (this.state.activeTabID !== location[0]) {
 				// has node
@@ -148,8 +147,6 @@ class App extends Component {
 		}
 
 		const result = await Api.deleteNode(nodeID);
-
-		console.log("deleteNode", nodeID, this.state.activeTabID, result);
 
 		if (result.status === "success") {
 			/*const newTree = this.state.masterTree.filter((element, i) => {
@@ -243,7 +240,6 @@ class App extends Component {
 
 				return matched;
 			});
-			//			console.log("newtree",  newTree.find(x => x.id===this.state.activeTabID).children);
 
 			this.setState({ masterTree: newTree, activeTreeID: newNode.id, content: "" });
 		} else {
@@ -256,8 +252,6 @@ class App extends Component {
 		const node = this.state.masterTree.find((element) => {
 			return element.id === tabID;
 		});
-
-		console.log("displayTab", tabID, nodeID, node);
 
 		if (node) {
 			if (nodeID === null) {
@@ -277,8 +271,6 @@ class App extends Component {
 		}
 
 		const result = await Api.getNode(nodeID);
-
-		console.log("displayNode", nodeID, result.payload.content);
 
 		if (result.status === "success") {
 			const content = result.payload.content ? result.payload.content : "";

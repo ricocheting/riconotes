@@ -113,20 +113,37 @@ class App extends Component {
 
 	getHash = () => {
 		var location = window.location.hash.replace(/^#\/?|\/$/g, "").split("/"); //hash looks like #0002/0263/Quicktext-more-whatever where #tabID/nodeID/Title
-		if (location.length > 0 && location[0].length > 0) {
+		if (location.length > 0) {
 			console.log("getHash activeTabID:", this.state.activeTabID, "location:", location);
 			// tab changed
 			if (this.state.activeTabID !== location[0]) {
-				this.displayTab(location[0], location[1]);
-			} else if (location.length > 1 && location[1].length > 0) {
+				// has node
+				if (location.length > 1 && location[1].length > 0) {
+					this.displayTab(location[0], location[1]);
+				} else {
+					this.displayTab(location[0]);
+				}
+			}
+			// has node
+			else if (location.length > 1 && location[1].length > 0) {
 				this.displayNode(location[1]);
+			}
+			// blank node
+			else {
+				this.displayNode(null);
 			}
 		}
 	};
 
-	//#######################################
-	deleteNode = async (id) => {
-		const result = await Api.deleteNode(id);
+	deleteNode = async (nodeID) => {
+		if (nodeID === null) {
+			message.error("DeleteNode ID is null");
+			return;
+		}
+
+		const result = await Api.deleteNode(nodeID);
+
+		console.log("deleteNode", nodeID, this.state.activeTabID, result);
 
 		if (result.status === "success") {
 			/*const newTree = this.state.masterTree.filter((element, i) => {
@@ -135,12 +152,11 @@ class App extends Component {
 			})*/
 
 			// DONT DO THIS. should use filter() to cleanup state.masterTree instead of reassigning it from what the API returns
-			this.setState({ masterTree: result.payload.tree, activeTreeID: null }, () => {
+			this.setState({ masterTree: result.payload.tree }, () => {
 				this.setHash(this.state.activeTabID);
 			});
 		} else {
 			message.error(result.message);
-			this.setState({ activeTreeID: id, content: "" });
 		}
 	};
 

@@ -19,7 +19,7 @@ class App extends Component {
 	};
 
 	async componentDidMount() {
-		window.addEventListener("hashchange", this.handleNewHash, false);
+		window.addEventListener("hashchange", this.getHash, false);
 
 		const result = await Api.getTree();
 
@@ -35,7 +35,11 @@ class App extends Component {
 			if (location.length > 0 && location[0].length > 0) {
 				// if we pulled a TabID
 				activeTabID = location[0];
-				callback = this.displayNode(location[1]); // display the content for this activeTreeID
+
+				// if we pulled a nodeID
+				if (location.length > 1 && location[1].length > 0) {
+					callback = this.displayNode(location[1]); // display the content for this activeTreeID
+				}
 			} else if (result.payload.tree.length > 0) {
 				// default to the first tab
 				// default to the first tab
@@ -57,55 +61,66 @@ class App extends Component {
 	}
 
 	//#######################################
-	// check if the ID is valid. if yes, update the hash
 	setNode = (id) => {
-		if (!id || typeof id === "undefined" || id === undefined) {
-			this.setState({ activeTreeID: null, content: "" });
-			return;
-		} else if (Array.isArray(id)) {
+		if (Array.isArray(id)) {
 			// the Tree.onSelect() can return multiple ids so it gives back an array. we only care about the first
 			id = id[0];
 		}
 
-		let title = "";
-		this.state.masterTree.map((node, key) => {
-			let matched = this.searchTree(node, id);
+		this.setHash(this.state.activeTabID, id);
+	};
+	setTab = (id) => {
+		this.setHash(id);
+	};
 
-			if (matched !== null) {
-				title = matched.title
-					.replace(/[^a-z0-9]/gi, "-")
-					.replace(/-+/gi, "-")
-					.replace(/^-|-$/gi, "");
+	// update the window.location.href hash
+	setHash = (tabID = null, nodeID = null) => {
+		let newHash = "#";
+
+		// contains at least one id
+		if (tabID !== null || nodeID !== null) {
+			let title = "";
+
+			if (nodeID !== null) {
+				this.state.masterTree.map((node, key) => {
+					let matched = this.searchTree(node, nodeID);
+
+					if (matched !== null) {
+						title = matched.title
+							.replace(/[^a-z0-9]/gi, "-")
+							.replace(/-+/gi, "-")
+							.replace(/^-|-$/gi, "");
+
+						if (tabID === null) {
+							tabID = node.ID;
+						}
+					}
+
+					return null;
+				});
 			}
 
-			return null;
-		});
+			newHash += tabID;
+
+			if (title.length > 0) {
+				newHash += "/" + nodeID + "/" + title;
+			}
+		}
 
 		// change the location. which triggers the handleNewHash() listener assigned in componentDidMount() which triggers displayNodeHash()
-		window.location.href = window.location.href.replace(/#(.*)$/, "") + "#" + this.state.activeTabID + "/" + id + "/" + title;
+		window.location.href = window.location.href.replace(/#(.*)$/, "") + newHash;
 	};
 
-	// query the API to pull the content for this ID
-	displayNode = async (id) => {
-		const result = await Api.getNode(id);
-
-		if (result.status === "success") {
-			const content = result.payload.content ? result.payload.content : "";
-			this.setState({ activeTreeID: id, content: content });
-		} else {
-			message.error(result.message);
-			this.setState({ activeTreeID: id, content: "" });
-		}
-	};
-	handleNewHash = () => {
-		var location = window.location.hash.replace(/^#\/?|\/$/g, "").split("/"); //hash looks like #0002/Quicktext-more-whatever
+	getHash = () => {
+		var location = window.location.hash.replace(/^#\/?|\/$/g, "").split("/"); //hash looks like #0002/0263/Quicktext-more-whatever where #tabID/nodeID/Title
 		if (location.length > 0 && location[0].length > 0) {
-			// if we pulled an ID
-			//console.log("note: ",location);
+			console.log("getHash activeTabID:", this.state.activeTabID, "location:", location);
+			// tab changed
 			if (this.state.activeTabID !== location[0]) {
-				this.displayTab(location[0]);
+				this.displayTab(location[0], location[1]);
+			} else if (location.length > 1 && location[1].length > 0) {
+				this.displayNode(location[1]);
 			}
-			this.displayNode(location[1]);
 		}
 	};
 
@@ -120,17 +135,8 @@ class App extends Component {
 			})*/
 
 			// DONT DO THIS. should use filter() to cleanup state.masterTree instead of reassigning it from what the API returns
-			this.setState({ masterTree: result.payload.tree, activeTreeID: null });
-
-			result.payload.tree.forEach((node) => {
-				if (node.id === this.state.activeTabID) {
-					// default to the first node in tree
-					if (node.children.length > 0) {
-						this.setNode(node.children[0].id);
-					}
-				}
-
-				return null;
+			this.setState({ masterTree: result.payload.tree, activeTreeID: null }, () => {
+				this.setHash(this.state.activeTabID);
 			});
 		} else {
 			message.error(result.message);
@@ -224,17 +230,37 @@ class App extends Component {
 	};
 
 	// display the tree for the clicked tab
-	displayTab = (id) => {
-		let node = this.state.masterTree.find((element) => {
-			return element.id === id;
+	displayTab = (tabID, nodeID = null) => {
+		const node = this.state.masterTree.find((element) => {
+			return element.id === tabID;
 		});
 
-		if (node) {
-			const activeTreeID = node.children.length > 0 ? node.children[0].id : null;
+		console.log("displayTab", tabID, nodeID, node);
 
-			this.setState({ activeTabID: id, activeTreeID: activeTreeID }, () => {
-				this.setNode(activeTreeID); // displayNode also sets state.activeTreeID
+		if (node) {
+			if (nodeID === null) {
+				nodeID = node.children.length > 0 ? node.children[0].id : null;
+			}
+
+			this.setState({ activeTabID: tabID, activeTreeID: nodeID, content: "" }, () => {
+				if (nodeID !== null) {
+					this.displayNode(nodeID);
+				}
 			});
+		}
+	};
+	// query the API to pull the content for this ID
+	displayNode = async (nodeID) => {
+		const result = await Api.getNode(nodeID);
+
+		console.log("displayNode", nodeID, result.payload.content);
+
+		if (result.status === "success") {
+			const content = result.payload.content ? result.payload.content : "";
+			this.setState({ activeTreeID: nodeID, content: content });
+		} else {
+			message.error(result.message);
+			this.setState({ activeTreeID: nodeID, content: "" });
 		}
 	};
 
@@ -308,7 +334,7 @@ class App extends Component {
 					<Col>
 						<Tabs
 							activeTabID={this.state.activeTabID}
-							setActiveTab={this.displayTab}
+							setActiveTab={this.setHash}
 							tree={this.state.masterTree}
 							deleteNode={this.deleteNode}
 							saveNodeTitle={this.saveNodeTitle}

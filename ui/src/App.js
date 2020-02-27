@@ -128,9 +128,15 @@ class App extends Component {
 			else if (location.length > 1 && location[1].length > 0) {
 				this.displayNode(location[1]);
 			}
-			// blank node
+			// blank node, then get the tab's first node
 			else {
-				this.displayNode(null);
+				const activeTabID = this.state.activeTabID;
+				const node = this.state.masterTree.find((element) => {
+					return element.id === activeTabID;
+				});
+
+				const nodeID = node && node.children.length > 0 ? node.children[0].id : null;
+				this.displayNode(nodeID);
 			}
 		}
 	};

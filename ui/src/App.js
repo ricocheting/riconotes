@@ -242,15 +242,18 @@ class App extends Component {
 				nodeID = node.children.length > 0 ? node.children[0].id : null;
 			}
 
-			this.setState({ activeTabID: tabID, activeTreeID: nodeID, content: "" }, () => {
-				if (nodeID !== null) {
-					this.displayNode(nodeID);
-				}
+			this.setState({ activeTabID: tabID }, () => {
+				this.displayNode(nodeID);
 			});
 		}
 	};
 	// query the API to pull the content for this ID
 	displayNode = async (nodeID) => {
+		if (nodeID === null) {
+			this.setState({ activeTreeID: nodeID, content: "" });
+			return;
+		}
+
 		const result = await Api.getNode(nodeID);
 
 		console.log("displayNode", nodeID, result.payload.content);

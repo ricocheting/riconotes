@@ -126,7 +126,7 @@ ul.tab-bar li.lock{
 }*/
 .contentBlock{
 	display:flex;
-	height: calc(100vh - 200px);
+	height: calc(100vh - 160px);
 }
 .contentBlock .contentEdit, .contentBlock .markdown-body{
 	flex:1;
@@ -210,4 +210,20 @@ pre {
 /* HTML paster in content editor */
 .contentPasteModal textarea{
 	width:100%;
+}
+.modal-edit {
+	top: 0;
+	height: calc(100vh - 16px);
+	margin: 8px;
+}
+.modal-edit .ant-modal-content{
+	height: calc(100vh - 16px);
+}
+.modal-edit-buttons {
+	/* if you allow it to wrap, .contentBlock height will push the footer buttons off the modal on mobile width */
+	white-space: nowrap;
+	overflow:hidden;
+}
+.modal-edit-buttons .ant-btn-group{
+	margin:0 15px 8px 0;
 }

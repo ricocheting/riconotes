@@ -341,56 +341,62 @@ class Content extends Component {
 				</Modal>
 
 				<Modal
-					style={{ top: 0, margin: 20, height: "90vh" }}
+					className="modal-edit"
 					width="auto"
 					visible={this.state.modalEditVisible}
 					onOk={this.saveContent}
+					okText="Save"
 					onCancel={this.editCancel}>
-					<ButtonGroup className="contentFormatContainer">
-						<Button onClick={() => this.editInsert("**", "**")} icon="bold" title="Bold"></Button>
-						<Button onClick={() => this.editInsert("*", "*")} icon="italic" title="Italic"></Button>
-						<Button onClick={() => this.editInsert("~~", "~~")} icon="strikethrough" title="Strikethrough"></Button>
-					</ButtonGroup>
-					<ButtonGroup className="contentFormatContainer">
-						<Button onClick={() => this.editInsert("# ", "")} title="Heading 1">
-							H1
-						</Button>
-						<Button onClick={() => this.editInsert("## ", "")} title="Heading 2">
-							H2
-						</Button>
-						<Button onClick={() => this.editInsert("### ", "")} title="Heading 3">
-							H3
-						</Button>
-					</ButtonGroup>
-					<ButtonGroup className="contentFormatContainer">
-						<Button
-							onClick={() => this.contentManipulate("", "* ", "", "")}
-							icon="unordered-list"
-							title="Unordered List"></Button>
-						<Button onClick={() => this.contentManipulate("", "1. ", "", "")} icon="ordered-list" title="Ordered List"></Button>
-					</ButtonGroup>
-					<ButtonGroup className="contentFormatContainer">
-						<Button
-							onClick={() => this.contentManipulate("", "", "", "-------------------------\n")}
-							icon="line"
-							title="Horizontal Rule"></Button>
-					</ButtonGroup>
+					<div className="modal-edit-buttons">
+						<ButtonGroup>
+							<Button onClick={() => this.editInsert("**", "**")} icon="bold" title="Bold"></Button>
+							<Button onClick={() => this.editInsert("*", "*")} icon="italic" title="Italic"></Button>
+							<Button onClick={() => this.editInsert("~~", "~~")} icon="strikethrough" title="Strikethrough"></Button>
+						</ButtonGroup>
+						<ButtonGroup>
+							<Button onClick={() => this.editInsert("# ", "")} title="Heading 1">
+								H1
+							</Button>
+							<Button onClick={() => this.editInsert("## ", "")} title="Heading 2">
+								H2
+							</Button>
+							<Button onClick={() => this.editInsert("### ", "")} title="Heading 3">
+								H3
+							</Button>
+						</ButtonGroup>
+						<ButtonGroup>
+							<Button
+								onClick={() => this.contentManipulate("", "* ", "", "")}
+								icon="unordered-list"
+								title="Unordered List"></Button>
+							<Button
+								onClick={() => this.contentManipulate("", "1. ", "", "")}
+								icon="ordered-list"
+								title="Ordered List"></Button>
+						</ButtonGroup>
+						<ButtonGroup>
+							<Button
+								onClick={() => this.contentManipulate("", "", "", "-------------------------\n")}
+								icon="line"
+								title="Horizontal Rule"></Button>
+						</ButtonGroup>
 
-					<ButtonGroup className="contentFormatContainer" style={{ marginLeft: "15px" }}>
-						<Button
-							type={this.state.spellCheck ? "primary" : "default"}
-							onClick={() => this.setState({ spellCheck: !this.state.spellCheck })}
-							title="Toggle Spellcheck"
-							icon="file-done"></Button>
-					</ButtonGroup>
+						<ButtonGroup>
+							<Button
+								type={this.state.spellCheck ? "primary" : "default"}
+								onClick={() => this.setState({ spellCheck: !this.state.spellCheck })}
+								title="Toggle Spellcheck"
+								icon="file-done"></Button>
+						</ButtonGroup>
 
-					<ButtonGroup className="contentFormatContainer" style={{ marginLeft: "15px" }}>
-						<Button
-							onClick={this.pasteModalShow}
-							title="Convert HTML Links to markdown"
-							icon="snippets"
-							style={{ borderColor: "black" }}></Button>
-					</ButtonGroup>
+						<ButtonGroup>
+							<Button
+								onClick={this.pasteModalShow}
+								title="Convert HTML Links to markdown"
+								icon="snippets"
+								style={{ borderColor: "black" }}></Button>
+						</ButtonGroup>
+					</div>
 
 					<div className="contentBlock">
 						<div className="contentEdit">

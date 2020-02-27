@@ -8,22 +8,6 @@ import EditBar from "./EditBar";
 import { Row, Col, Icon, Button, message } from "antd";
 const ButtonGroup = Button.Group;
 
-/*
-
-when you want to move the folder: delete node_modules, move the folder, then run npm install in it
-
-npx create-react-app react-tutorial
-cd react-tutorial
-npm start
-
-	https://ant.design/components/tabs/
-
-	import 'antd/dist/antd.css';
-
-npm run build
-
-*/
-
 let defaultExpandedKeys = [];
 
 class App extends Component {
@@ -34,9 +18,6 @@ class App extends Component {
 		content: "",
 	};
 
-	// Code is invoked after the component is mounted/inserted into the DOM tree.
-	// React lifecycle method. Lifecycle is the order in which methods are called in React. Mounting refers to an item being inserted into the DOM.
-	// When we pull in API data, we want to use componentDidMount, because we want to make sure the component has rendered to the DOM before we bring in the data
 	async componentDidMount() {
 		window.addEventListener("hashchange", this.handleNewHash, false);
 
@@ -54,7 +35,7 @@ class App extends Component {
 			if (location.length > 0 && location[0].length > 0) {
 				// if we pulled a TabID
 				activeTabID = location[0];
-				callback = this.displayNodeHash(location[1]); // display the content for this activeTreeID
+				callback = this.displayNode(location[1]); // display the content for this activeTreeID
 			} else if (result.payload.tree.length > 0) {
 				// default to the first tab
 				// default to the first tab
@@ -77,7 +58,7 @@ class App extends Component {
 
 	//#######################################
 	// check if the ID is valid. if yes, update the hash
-	displayNode = (id) => {
+	setNode = (id) => {
 		if (!id || typeof id === "undefined" || id === undefined) {
 			this.setState({ activeTreeID: null, content: "" });
 			return;
@@ -105,7 +86,7 @@ class App extends Component {
 	};
 
 	// query the API to pull the content for this ID
-	displayNodeHash = async (id) => {
+	displayNode = async (id) => {
 		const result = await Api.getNode(id);
 
 		if (result.status === "success") {
@@ -122,9 +103,9 @@ class App extends Component {
 			// if we pulled an ID
 			//console.log("note: ",location);
 			if (this.state.activeTabID !== location[0]) {
-				this.setActiveTab(location[0]);
+				this.displayTab(location[0]);
 			}
-			this.displayNodeHash(location[1]);
+			this.displayNode(location[1]);
 		}
 	};
 
@@ -145,7 +126,7 @@ class App extends Component {
 				if (node.id === this.state.activeTabID) {
 					// default to the first node in tree
 					if (node.children.length > 0) {
-						this.displayNode(node.children[0].id);
+						this.setNode(node.children[0].id);
 					}
 				}
 
@@ -212,7 +193,7 @@ class App extends Component {
 		}
 	};
 
-	addChildNode = async (id) => {
+	addNodeChild = async (id) => {
 		const result = await Api.insertTreeChild(id);
 
 		if (result.status === "success") {
@@ -243,7 +224,7 @@ class App extends Component {
 	};
 
 	// display the tree for the clicked tab
-	setActiveTab = (id) => {
+	displayTab = (id) => {
 		let node = this.state.masterTree.find((element) => {
 			return element.id === id;
 		});
@@ -252,15 +233,12 @@ class App extends Component {
 			const activeTreeID = node.children.length > 0 ? node.children[0].id : null;
 
 			this.setState({ activeTabID: id, activeTreeID: activeTreeID }, () => {
-				// default to the first node in tab
-				if (activeTreeID !== null) {
-					this.displayNode(activeTreeID); // displayNode also sets state.activeTreeID
-				}
+				this.setNode(activeTreeID); // displayNode also sets state.activeTreeID
 			});
 		}
 	};
 
-	addParentNode = async () => {
+	addNodeParent = async () => {
 		const result = await Api.insertTreeParent();
 
 		if (result.status === "success") {
@@ -302,6 +280,7 @@ class App extends Component {
 		return null;
 	};
 
+	// returns node that is active
 	activeNode = () => {
 		if (!this.state.activeTreeID) {
 			return null;
@@ -329,18 +308,18 @@ class App extends Component {
 					<Col>
 						<Tabs
 							activeTabID={this.state.activeTabID}
-							setActiveTab={this.setActiveTab}
+							setActiveTab={this.displayTab}
 							tree={this.state.masterTree}
 							deleteNode={this.deleteNode}
 							saveNodeTitle={this.saveNodeTitle}
-							addParentNode={this.addParentNode}
+							addParentNode={this.addNodeParent}
 						/>
 						<EditBar
 							node={this.activeNode()}
 							deleteNode={this.deleteNode}
 							saveNodeTitle={this.saveNodeTitle}
 							saveNodeExpand={this.saveNodeExpand}
-							addChildNode={this.addChildNode}
+							addChildNode={this.addNodeChild}
 						/>
 					</Col>
 				</Row>
@@ -353,15 +332,15 @@ class App extends Component {
 								activeTabID={this.state.activeTabID}
 								activeTreeID={this.state.activeTreeID}
 								expandedKeys={defaultExpandedKeys}
-								displayNode={this.displayNode}
+								displayNode={this.setNode}
 							/>
 							<div className="treeAddBtn">
 								<ButtonGroup size="small">
-									<Button onClick={() => this.addChildNode(this.state.activeTabID)}>
+									<Button onClick={() => this.addNodeChild(this.state.activeTabID)}>
 										<Icon type="plus-circle" theme="twoTone" />
 										Add
 									</Button>
-									<Button onClick={() => this.addChildNode(this.state.activeTreeID)}>
+									<Button onClick={() => this.addNodeChild(this.state.activeTreeID)}>
 										<Icon type="plus-circle" />
 										Add Child
 									</Button>

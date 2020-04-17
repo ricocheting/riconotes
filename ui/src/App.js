@@ -336,6 +336,31 @@ class App extends Component {
 		});
 	};
 
+	// TODO: finish this
+	// nfind() returns: [node, parent] both will be null if not found
+	nfind = (id, parent) => {
+		for (let i = 0; i < parent.children.length; i++) {
+			const node = parent.children[i];
+
+			if (node.id === id) {
+				return [node, parent];
+			}
+
+			// crawl if node has children
+			var nReturn = null;
+			var pReturn = null;
+			if (node.children.length > 0) {
+				[nReturn, pReturn] = this.nfind(id, node);
+			}
+
+			if (nReturn !== null || pReturn != null) {
+				return [nReturn, pReturn];
+			}
+		}
+
+		return [null, null];
+	};
+
 	render() {
 		return (
 			<div className="container">

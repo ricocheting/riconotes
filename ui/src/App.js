@@ -247,6 +247,19 @@ class App extends Component {
 		}
 	};
 
+	addNodeParent = async () => {
+		const result = await Api.insertTreeParent();
+
+		if (result.status === "success") {
+			// success
+			let newNode = result.payload.node;
+			newNode.editing = true;
+			this.setState({ masterTree: [...this.state.masterTree, newNode] });
+		} else {
+			message.error(result.message);
+		}
+	};
+
 	// display the tree for the clicked tab
 	displayTab = (tabID, nodeID = null) => {
 		const node = this.state.masterTree.find((element) => {
@@ -278,19 +291,6 @@ class App extends Component {
 		} else {
 			message.error(result.message);
 			this.setState({ activeTreeID: nodeID, content: "" });
-		}
-	};
-
-	addNodeParent = async () => {
-		const result = await Api.insertTreeParent();
-
-		if (result.status === "success") {
-			// success
-			let newNode = result.payload.node;
-			newNode.editing = true;
-			this.setState({ masterTree: [...this.state.masterTree, newNode] });
-		} else {
-			message.error(result.message);
 		}
 	};
 
@@ -329,19 +329,11 @@ class App extends Component {
 			return null;
 		}
 
-		let out = null;
+		return this.state.masterTree.find((node) => {
+			const matched = this.searchTree(node, this.state.activeTreeID);
 
-		this.state.masterTree.map((node, key) => {
-			let matched = this.searchTree(node, this.state.activeTreeID);
-
-			if (matched !== null) {
-				out = matched;
-			}
-
-			return null;
+			return matched !== null;
 		});
-
-		return out;
 	};
 
 	render() {

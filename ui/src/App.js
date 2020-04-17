@@ -329,18 +329,20 @@ class App extends Component {
 			return null;
 		}
 
-		return this.state.masterTree.find((node) => {
-			const matched = this.searchTree(node, this.state.activeTreeID);
+		let result = this.nfind(this.state.activeTreeID);
 
-			return matched !== null;
-		});
+		return result[0];
 	};
 
-	// TODO: finish this
-	// nfind() returns: [node, parent] both will be null if not found
-	nfind = (id, parent) => {
-		for (let i = 0; i < parent.children.length; i++) {
-			const node = parent.children[i];
+	// param: node id to search for, leave second param blank to search entire tree otherwise node to start searching on
+	// returns: [node, parent] both will be null if not found
+	nfind = (id, parent = null) => {
+		// how many to search
+		const n = parent === null ? this.state.masterTree.length : parent.children.length;
+
+		for (let i = 0; i < n; i++) {
+			// if no parent, use this masterTree. otherwise use parent.children
+			const node = parent === null ? this.state.masterTree[i] : parent.children[i];
 
 			if (node.id === id) {
 				return [node, parent];

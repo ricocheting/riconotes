@@ -35,8 +35,8 @@ class Api {
 		}
 	}
 
-	getTree(id = "") {
-		const url = Setting.API_ENDPOINT + "/" + (id.length > 0 ? "?id=" + id : "");
+	getTree(id = null) {
+		const url = Setting.API_ENDPOINT + "/" + (id && id.length > 0 ? "?id=" + id : "");
 		return this.myFetch(url, "GET");
 	}
 

@@ -18,47 +18,65 @@ class App extends Component {
 		content: "",
 	};
 
-	async componentDidMount() {
+	componentDidMount() {
 		window.addEventListener("hashchange", this.getHash, false);
 
-		const result = await Api.getTree();
+		this.load();
+	}
+
+	load = async () => {
+		let content = "",
+			activeTabID = null,
+			activeTreeID = null,
+			getID = null;
+
+		// see if there was hash set
+		var location = window.location.hash.replace(/^#\/?|\/$/g, "").split("/"); //hash looks like #0002/0263/Quicktext-more-whatever where #tabID/nodeID/Title
+		if (location.length > 0 && location[0].length > 0) {
+			// set TabID
+			activeTabID = location[0];
+			getID = activeTabID;
+
+			// if we pulled a NodeID
+			if (location[1] && location[1].length > 0) {
+				activeTreeID = location[1];
+				getID = activeTreeID;
+			}
+		}
+
+		const result = await Api.getTree(getID);
 
 		if (result.status === "success") {
 			this.expandedKeys(result.payload.tree);
-			let activeTabID = null,
-				activeTreeID = null,
-				content = "",
-				callback = null;
 
-			// see if there was hash set
-			var location = window.location.hash.replace(/^#\/?|\/$/g, "").split("/"); //hash looks like #1/0002/Quicktext
-			if (location.length > 0 && location[0].length > 0) {
-				// if we pulled a TabID
-				activeTabID = location[0];
-
-				// if we pulled a nodeID
-				if (location.length > 1 && location[1].length > 0) {
-					callback = this.displayNode(location[1]); // display the content for this activeTreeID
-				}
-			} else if (result.payload.tree.length > 0) {
-				// default to the first tab
-				// default to the first tab
-				if (result.payload.tree[0].children.length > 0) {
+			if (result.payload.tree.length > 0) {
+				// if we have no node id or tab id, default to the first tab (we already have content in payload)
+				if (
+					(!activeTreeID || activeTreeID.length < 1) &&
+					(!activeTabID || activeTabID.length < 1) &&
+					result.payload.tree[0].children.length > 0
+				) {
+					activeTabID = result.payload.tree[0].id;
 					activeTreeID = result.payload.tree[0].children[0].id;
+				} else if ((!activeTreeID || activeTreeID.length < 1) && activeTabID && activeTabID.length > 0) {
+					// if we have no node id, but do have a tab id then default to first child node in tab
+					const t = result.payload.tree.find((node) => {
+						return node.id === activeTabID;
+					});
+
+					if (t && t.children.length > 0) {
+						activeTreeID = t.children[0].id;
+					}
 				}
 
-				activeTabID = result.payload.tree[0].id;
 				content = result.payload.content;
 			}
 
-			this.setState(
-				{ masterTree: result.payload.tree, activeTabID: activeTabID, activeTreeID: activeTreeID, content: content },
-				() => callback
-			);
+			this.setState({ masterTree: result.payload.tree, activeTabID: activeTabID, activeTreeID: activeTreeID, content: content });
 		} else {
 			message.error(result.message);
 		}
-	}
+	};
 
 	//#######################################
 	setNode = (id) => {
@@ -230,15 +248,15 @@ class App extends Component {
 			const newTree = [...this.state.masterTree];
 
 			newTree.map((node, key) => {
-				let matched = this.searchTree(node, id);
-				if (matched !== null) {
-					matched.expand = true;
-					matched.children = [...matched.children, newNode];
+				let matched = this.nfind(id, node);
+				if (matched[0] !== null) {
+					matched[0].expand = true;
+					matched[0].children = [...matched[0].children, newNode];
 				} else {
-					matched = node;
+					matched[0] = node;
 				}
 
-				return matched;
+				return matched[0];
 			});
 
 			this.setState({ masterTree: newTree, activeTreeID: newNode.id, content: "" });

@@ -127,6 +127,7 @@ ul.tab-bar li.lock{
 .contentBlock{
 	display:flex;
 	height: calc(100vh - 160px);
+	min-height:100px;
 }
 .contentBlock .contentEdit, .contentBlock .markdown-body{
 	flex:1;
@@ -218,6 +219,7 @@ pre {
 }
 .modal-edit .ant-modal-content{
 	height: calc(100vh - 16px);
+	min-height:244px;
 }
 .modal-edit-buttons {
 	/* if you allow it to wrap, .contentBlock height will push the footer buttons off the modal on mobile width */

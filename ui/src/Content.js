@@ -147,7 +147,10 @@ class Content extends Component {
 		//console.log(newContent);
 
 		this.setState({ content: newContent }, () => {
-			if (opening.length < 1 && closing.length > 0) {
+			if (opening.length < 1 && prefix.length > 0 && postfix.length < 1 && closing.length < 1 && prefix !== "\t") {
+				// inserting chars only at the begining of lines (and not inserting tab)
+				this.editRef.current.selectionStart = this.editRef.current.selectionEnd = preSelect.length; // put cursor at start of first edited line
+			} else if (opening.length < 1 && closing.length > 0) {
 				// no opening. put cursor
 				this.editRef.current.selectionStart = this.editRef.current.selectionEnd =
 					preSelect.length + opening.length + 0 + rows.join("\n").length + 1 + closing.length; //tab inserted in pre + number inserted in selected
@@ -354,13 +357,13 @@ class Content extends Component {
 							<Button onClick={() => this.editInsert("~~", "~~")} icon="strikethrough" title="Strikethrough"></Button>
 						</ButtonGroup>
 						<ButtonGroup>
-							<Button onClick={() => this.editInsert("# ", "")} title="Heading 1">
+							<Button onClick={() => this.contentManipulate("", "# ", "", "")} title="Heading 1">
 								H1
 							</Button>
-							<Button onClick={() => this.editInsert("## ", "")} title="Heading 2">
+							<Button onClick={() => this.contentManipulate("", "## ", "", "")} title="Heading 2">
 								H2
 							</Button>
-							<Button onClick={() => this.editInsert("### ", "")} title="Heading 3">
+							<Button onClick={() => this.contentManipulate("", "### ", "", "")} title="Heading 3">
 								H3
 							</Button>
 						</ButtonGroup>

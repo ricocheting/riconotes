@@ -120,6 +120,22 @@ func (t *Tree) HasChildren(id string) bool {
 
 	return false
 }
+
+// HasParent determines of an ID is a root/tab ID (root/tab id returns false)
+func (t *Tree) HasParent(id string) bool {
+	t.mux.RLock()
+	defer t.mux.RUnlock()
+
+	// if it's one of these base nodes, it has no parent
+	for _, node := range t.nodes {
+		if node.ID == id {
+			return false
+		}
+	}
+
+	return true
+}
+
 func (t *Tree) Empty() bool {
 	t.mux.RLock()
 	out := len(t.nodes) < 1

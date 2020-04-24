@@ -26,7 +26,16 @@ func (sv *Server) getTree(c *gin.Context) {
 	)
 
 	if len(id) > 0 {
-		content, err = sv.store.Load(id)
+		// check if id is for a Tab. if it is a tab id, try to get content for first child node
+		if !tree.HasParent(id) {
+			if node, ok := tree.Find(id); ok {
+				if nodeFirst, ok := node.FirstChild(); ok {
+					content, err = sv.store.Load(nodeFirst.ID)
+				}
+			}
+		} else {
+			content, err = sv.store.Load(id)
+		}
 	}
 
 	payload := struct {

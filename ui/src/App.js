@@ -100,22 +100,18 @@ class App extends Component {
 			let title = "";
 
 			if (nodeID !== null) {
-				this.state.masterTree.map((node, key) => {
-					let matched = this.searchTree(node, nodeID);
+				const sresult = this.nfind(nodeID);
 
-					if (matched !== null) {
-						title = matched.title
-							.replace(/[^a-z0-9]/gi, "-")
-							.replace(/-+/gi, "-")
-							.replace(/^-|-$/gi, "");
+				if (sresult[0] !== null) {
+					title = sresult[0].title
+						.replace(/[^a-z0-9]/gi, "-")
+						.replace(/-+/gi, "-")
+						.replace(/^-|-$/gi, "");
 
-						if (tabID === null) {
-							tabID = node.ID;
-						}
+					if (tabID === null && sresult[1]) {
+						tabID = sresult[1].ID;
 					}
-
-					return null;
-				});
+				}
 			}
 
 			newHash += tabID;
@@ -327,6 +323,7 @@ class App extends Component {
 	};
 
 	// searches tree and returns node with matching id
+	// todo: replace any occurance of searchTree() with nfind()
 	searchTree = (element, id) => {
 		if (element.id === id) {
 			return element;

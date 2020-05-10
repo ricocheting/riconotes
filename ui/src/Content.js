@@ -3,6 +3,8 @@ import Api from "./Api";
 import { Modal, Button, Empty, message } from "antd";
 import ReactMarkdown from "react-markdown";
 
+const xtend = require("xtend");
+
 const ButtonGroup = Button.Group;
 
 const renderers = {
@@ -19,6 +21,31 @@ const renderers = {
 
 		return <a href={reference.$ref}>{reference.children}</a>;
 	},
+
+	heading: (props) => {
+		// example taken from https://github.com/rexxars/react-markdown/blob/master/src/renderers.js#L66 and xtend() from #L58
+		return React.createElement(
+			`h${props.level}`,
+			xtend(
+				{
+					onClick: () => {
+						console.log(props.level, props["data-sourcepos"]);
+					},
+				},
+				props
+			),
+			props.children
+		);
+	},
+};
+
+const FindBlock = (markdown, lineStart) => {
+	// get level of lineStart
+	let pre,
+		block,
+		post = "";
+
+	return Array(pre, block, post);
 };
 
 class Content extends Component {
@@ -324,7 +351,7 @@ class Content extends Component {
 				</div>
 
 				{this.state.content.length > 0 ? (
-					<ReactMarkdown className="markdown-body" source={this.state.content} renderers={renderers} />
+					<ReactMarkdown className="markdown-body" source={this.state.content} renderers={renderers} sourcePos={true} />
 				) : (
 					<Empty description={<span>No text entered</span>} />
 				)}
@@ -413,7 +440,7 @@ class Content extends Component {
 								onKeyDown={this.editKeyDown}
 							/>
 						</div>
-						<ReactMarkdown className="markdown-body" source={this.state.content} renderers={renderers} />
+						<ReactMarkdown className="markdown-body" source={this.state.content} renderers={renderers} sourcePos={true} />
 					</div>
 				</Modal>
 			</div>

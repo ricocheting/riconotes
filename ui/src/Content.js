@@ -7,47 +7,6 @@ const xtend = require("xtend");
 
 const ButtonGroup = Button.Group;
 
-const renderers = {
-	// fix for react-markdown tries to link anything in brackets
-	// https://github.com/rexxars/react-markdown/issues/115
-	// https://github.com/rexxars/react-markdown/issues/218
-	// https://github.com/rexxars/react-markdown/issues/276
-	linkReference: (reference) => {
-		// linkReference: (reference: Object): Node => {
-		if (!reference.href) {
-			//return `[${reference.children[0].props.children}]`;
-			return <>[{reference.children[0]}]</>;
-		}
-
-		return <a href={reference.$ref}>{reference.children}</a>;
-	},
-
-	heading: (props) => {
-		// example taken from https://github.com/rexxars/react-markdown/blob/master/src/renderers.js#L66 and xtend() from #L58
-		return React.createElement(
-			`h${props.level}`,
-			xtend(
-				{
-					onClick: () => {
-						console.log(props.level, props["data-sourcepos"]);
-					},
-				},
-				props
-			),
-			props.children
-		);
-	},
-};
-
-const FindBlock = (markdown, lineStart) => {
-	// get level of lineStart
-	let pre,
-		block,
-		post = "";
-
-	return Array(pre, block, post);
-};
-
 class Content extends Component {
 	constructor(props) {
 		super(props);
@@ -75,6 +34,78 @@ class Content extends Component {
 			});
 		}
 	}
+
+	markdownRenderers = {
+		// fix for react-markdown tries to link anything in brackets
+		// https://github.com/rexxars/react-markdown/issues/115
+		// https://github.com/rexxars/react-markdown/issues/218
+		// https://github.com/rexxars/react-markdown/issues/276
+		linkReference: (reference) => {
+			// linkReference: (reference: Object): Node => {
+			if (!reference.href) {
+				//return `[${reference.children[0].props.children}]`;
+				return <>[{reference.children[0]}]</>;
+			}
+
+			return <a href={reference.$ref}>{reference.children}</a>;
+		},
+
+		heading: (props) => {
+			// example taken from https://github.com/rexxars/react-markdown/blob/master/src/renderers.js#L66 and xtend() from #L58
+			return React.createElement(
+				`h${props.level}`,
+				xtend(
+					{
+						onClick: () => {
+							this.FindBlock(props["data-sourcepos"]);
+						},
+					},
+					props
+				),
+				props.children
+			);
+		},
+	};
+
+	FindBlock = (sourcepos) => {
+		const { content } = this.state;
+		const lines = content.split(/\r?\n/);
+
+		// get the line number out of sourcepos
+		const reSourcepos = /^(\d+):(\d+)-(\d+):(\d+)$/; //13:1-13:14
+		const reHeading = /^(#{1,6}) /; //#, ##, ###
+		const result = reSourcepos.exec(sourcepos);
+		const lineNo = result.length > 1 ? parseInt(result[1]) - 1 : 0;
+		let lineEnd = 0;
+
+		let level = 0;
+
+		if (lines[lineNo]) {
+			const result = reHeading.exec(lines[lineNo]);
+			if (result.length > 1) {
+				level = result[1].length;
+				//console.log("heading", level, lines[lineNo]);
+			}
+		}
+
+		for (let i = lineNo + 1, n = lines.length; i <= n; i++) {
+			const result = reHeading.exec(lines[i]);
+			if (result && result.length > 1 && result[1].length <= level) {
+				lineEnd = i;
+				break;
+			}
+		}
+
+		// get level of lineStart
+		let pre = lines.slice(0, lineNo).join("\n"),
+			block = lines.slice(lineNo, lineEnd).join("\n"),
+			post = lines.slice(lineEnd).join("\n");
+
+		console.log("pre", block);
+		//console.log(lineEnd + " at " + lines[lineEnd]);
+
+		return [pre, block, post];
+	};
 
 	onTabChange = (activeKey) => {
 		this.setState({ activeKey });
@@ -351,7 +382,12 @@ class Content extends Component {
 				</div>
 
 				{this.state.content.length > 0 ? (
-					<ReactMarkdown className="markdown-body" source={this.state.content} renderers={renderers} sourcePos={true} />
+					<ReactMarkdown
+						className="markdown-body"
+						source={this.state.content}
+						renderers={this.markdownRenderers}
+						sourcePos={true}
+					/>
 				) : (
 					<Empty description={<span>No text entered</span>} />
 				)}
@@ -440,7 +476,12 @@ class Content extends Component {
 								onKeyDown={this.editKeyDown}
 							/>
 						</div>
-						<ReactMarkdown className="markdown-body" source={this.state.content} renderers={renderers} sourcePos={true} />
+						<ReactMarkdown
+							className="markdown-body"
+							source={this.state.content}
+							renderers={this.markdownRenderers}
+							sourcePos={true}
+						/>
 					</div>
 				</Modal>
 			</div>

@@ -83,6 +83,9 @@ class App extends Component {
 
 		if (result.status === "success") {
 			this.setState({ masterTree: result.payload.tree });
+
+			// would be best to properly update the react states, but would require doublecheck if activeTabID and activeTreeID still existed. also update current ".header-bar" and defaultExpandedKeys
+			window.location.reload();
 		} else {
 			message.error(result.message);
 		}

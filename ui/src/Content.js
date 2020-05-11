@@ -18,7 +18,7 @@ class Content extends Component {
 			content: this.props.content ? this.props.content : "",
 			contentEdit: this.props.content ? this.props.content : "",
 			contentCachePre: "", // "cache" are values that is written back into "content" (for "Cancel" or unedited portions of markdown)
-			contentCacheBlock: "",
+			contentCacheSection: "",
 			contentCachePost: "",
 
 			modalEditVisible: false,
@@ -64,13 +64,13 @@ class Content extends Component {
 					<Icon
 						type="edit"
 						onClick={() => {
-							const [pre, block, post] = this.FindBlock(props["data-sourcepos"]);
+							const [pre, section, post] = this.FindSection(props["data-sourcepos"]);
 							this.setState({
 								modalEditVisible: true,
 								contentCachePre: pre,
-								contentCacheBlock: block,
+								contentCacheSection: section,
 								contentCachePost: post,
-								contentEdit: block,
+								contentEdit: section,
 							});
 						}}
 					/>
@@ -79,8 +79,8 @@ class Content extends Component {
 		},
 	};
 
-	// FindBlock looks through the content and tries to split it into
-	FindBlock = (sourcepos) => {
+	// FindSection looks through the content and tries to split it into sections
+	FindSection = (sourcepos) => {
 		const { content } = this.state;
 		const lines = content.split(/\r?\n/);
 
@@ -99,7 +99,7 @@ class Content extends Component {
 			}
 		}
 
-		// get where the block ends (where a similar or lower level Hx starts. or end)
+		// get where the section ends (where a similar or lower level Hx starts. or end)
 		let lineEnd = lines.length;
 		for (let i = lineNo + 1, n = lines.length; i <= n; i++) {
 			const result = reHeading.exec(lines[i]);
@@ -111,36 +111,48 @@ class Content extends Component {
 
 		// get the contents of each section and rejoin them
 		let pre = lines.slice(0, lineNo).join("\n"),
-			block = lines.slice(lineNo, lineEnd).join("\n"),
+			section = lines.slice(lineNo, lineEnd).join("\n"),
 			post = lines.slice(lineEnd).join("\n");
 
-		console.log("pre", block);
-		//console.log(lineEnd + " at " + lines[lineEnd]);
-
-		return [pre, block, post];
+		return [pre, section, post];
 	};
+
+	// takes the three sections split by FindSection() and put them back together
+	concantContent(pre, section, post) {
+		if (pre.length > 0) {
+			pre = pre + divider;
+		}
+		if (post.length > 0) {
+			section = section + divider;
+		}
+
+		return pre + section + post;
+	}
 
 	editorShow = () => {
 		this.setState({
 			modalEditVisible: true,
 			contentEdit: this.state.content,
 			contentCachePre: "",
-			contentCacheBlock: this.state.content,
+			contentCacheSection: this.state.content,
 			contentCachePost: "",
 		});
 	};
 
 	editorCancel = () => {
+		const content = this.concantContent(this.state.contentCachePre, this.state.contentCacheSection, this.state.contentCachePost);
+
 		this.setState({
 			modalEditVisible: false,
-			content: this.concantContent(this.state.contentCachePre, this.state.contentCacheBlock, this.state.contentCachePost),
+			content: content,
+			contentEdit: content, // if you do not update contentEdit, you can see the modal content revert back to original opening value before it closes
 		});
 	};
 
-	saveContent = async (block) => {
+	saveContent = async (section) => {
 		let { contentCachePre, contentCachePost } = this.state;
 
-		const content = this.concantContent(contentCachePre, block, contentCachePost);
+		const content = this.concantContent(contentCachePre, section, contentCachePost);
 		const result = await Api.putNode(this.state.id, content);
 
 		if (result.status === "success") {
@@ -156,17 +168,6 @@ class Content extends Component {
 			message.error(result.message);
 		}
 	};
-
-	concantContent(pre, block, post) {
-		if (pre.length > 0) {
-			pre = pre + divider;
-		}
-		if (post.length > 0) {
-			block = block + divider;
-		}
-
-		return pre + block + post;
-	}
 
 	render() {
 		if (!this.props.id) {

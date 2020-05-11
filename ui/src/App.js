@@ -244,6 +244,13 @@ class App extends Component {
 			const newTree = [...this.state.masterTree];
 
 			newTree.map((node, key) => {
+				// handle "Add"
+				if (node.id === id) {
+					node.children = [...node.children, newNode];
+					return node;
+				}
+
+				// handle "Add Child"
 				let matched = this.nfind(id, node);
 				if (matched[0] !== null) {
 					matched[0].expand = true;

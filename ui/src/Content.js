@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import Api from "./Api";
-import { Modal, Button, Empty, message } from "antd";
+import { Modal, Button, Empty, Icon, message } from "antd";
 import ReactMarkdown from "react-markdown";
 
-const xtend = require("xtend");
-
 const ButtonGroup = Button.Group;
+const divider = `\n`;
 
 class Content extends Component {
 	constructor(props) {
@@ -15,8 +14,11 @@ class Content extends Component {
 
 		this.state = {
 			id: this.props.id,
-			contentCache: "", // value that is written back into "content" when Cancel is pushed
 			content: this.props.content ? this.props.content : "",
+			contentCachePre: "", // value that is written back into "content" when Cancel is pushed
+			contentCacheBlock: "",
+			contentCachePost: "",
+			contentEdit: this.props.content ? this.props.content : "",
 			spellCheck: false,
 			activeKey: "code", // default active tab
 			modalPasteVisible: false,
@@ -51,18 +53,30 @@ class Content extends Component {
 		},
 
 		heading: (props) => {
-			// example taken from https://github.com/rexxars/react-markdown/blob/master/src/renderers.js#L66 and xtend() from #L58
+			if (!props) {
+				props = { level: 1 };
+			}
+			const children = props.children[0] ? props.children[0].props.value : "";
+			// example taken from https://github.com/rexxars/react-markdown/blob/master/src/renderers.js#L66
 			return React.createElement(
 				`h${props.level}`,
-				xtend(
-					{
-						onClick: () => {
-							this.FindBlock(props["data-sourcepos"]);
-						},
-					},
-					props
-				),
-				props.children
+				props,
+				<>
+					{children}{" "}
+					<Icon
+						type="edit"
+						onClick={() => {
+							const [pre, block, post] = this.FindBlock(props["data-sourcepos"]);
+							this.setState({
+								modalEditVisible: true,
+								contentCachePre: pre,
+								contentCacheBlock: block,
+								contentCachePost: post,
+								contentEdit: block,
+							});
+						}}
+					/>
+				</>
 			);
 		},
 	};
@@ -71,23 +85,23 @@ class Content extends Component {
 		const { content } = this.state;
 		const lines = content.split(/\r?\n/);
 
-		// get the line number out of sourcepos
+		// get the current line number
 		const reSourcepos = /^(\d+):(\d+)-(\d+):(\d+)$/; //13:1-13:14
 		const reHeading = /^(#{1,6}) /; //#, ##, ###
 		const result = reSourcepos.exec(sourcepos);
 		const lineNo = result.length > 1 ? parseInt(result[1]) - 1 : 0;
-		let lineEnd = 0;
 
+		// get the current line number's H1-H6 level
 		let level = 0;
-
 		if (lines[lineNo]) {
 			const result = reHeading.exec(lines[lineNo]);
 			if (result.length > 1) {
 				level = result[1].length;
-				//console.log("heading", level, lines[lineNo]);
 			}
 		}
 
+		// get where the block ends (where a similar or lower level Hx starts. or end)
+		let lineEnd = lines.length;
 		for (let i = lineNo + 1, n = lines.length; i <= n; i++) {
 			const result = reHeading.exec(lines[i]);
 			if (result && result.length > 1 && result[1].length <= level) {
@@ -96,7 +110,7 @@ class Content extends Component {
 			}
 		}
 
-		// get level of lineStart
+		// get the contents of each section and rejoin them
 		let pre = lines.slice(0, lineNo).join("\n"),
 			block = lines.slice(lineNo, lineEnd).join("\n"),
 			post = lines.slice(lineEnd).join("\n");
@@ -116,7 +130,7 @@ class Content extends Component {
 		const { value } = e.target;
 
 		this.setState({
-			content: value,
+			contentEdit: value,
 		});
 	};
 
@@ -151,7 +165,7 @@ class Content extends Component {
 	};
 
 	contentManipulate = (opening, prefix, postfix, closing) => {
-		const val = this.state.content,
+		const val = this.state.contentEdit,
 			start = this.editRef.current.selectionStart,
 			end = this.editRef.current.selectionEnd;
 
@@ -232,7 +246,7 @@ class Content extends Component {
 			// tab was pressed
 			event.preventDefault();
 
-			const val = this.state.content,
+			const val = this.state.contentEdit,
 				start = this.editRef.current.selectionStart,
 				end = this.editRef.current.selectionEnd;
 
@@ -288,11 +302,11 @@ class Content extends Component {
 			this.editRef.current.scrollTop = this.editRef.current.scrollHeight;
 
 			// put the cursor at the very end of document
-			this.editRef.current.selectionStart = this.editRef.current.selectionEnd = this.state.content.length;
+			this.editRef.current.selectionStart = this.editRef.current.selectionEnd = this.state.contentEdit.length;
 		}
 	};
 	editInsert = (prefix, postfix) => {
-		const val = this.state.content,
+		const val = this.state.contentEdit,
 			start = this.editRef.current.selectionStart,
 			end = this.editRef.current.selectionEnd;
 
@@ -314,19 +328,25 @@ class Content extends Component {
 	editShow = () => {
 		this.setState({
 			modalEditVisible: true,
-			contentCache: this.state.content,
+			contentEdit: this.state.content,
+			contentCachePre: "",
+			contentCacheBlock: this.state.content,
+			contentCachePost: "",
 		});
 	};
 
 	editCancel = () => {
 		this.setState({
 			modalEditVisible: false,
-			content: this.state.contentCache,
+			content: this.concantContent(this.state.contentCachePre, this.state.contentCacheBlock, this.state.contentCachePost),
 		});
 	};
 
 	saveContent = async () => {
-		const result = await Api.putNode(this.state.id, this.state.content);
+		let { contentCachePre, contentEdit, contentCachePost } = this.state;
+
+		const content = this.concantContent(contentCachePre, contentEdit, contentCachePost);
+		const result = await Api.putNode(this.state.id, content);
 
 		if (result.status === "success") {
 			message.success(result.message);
@@ -334,11 +354,23 @@ class Content extends Component {
 			// change it to the tab they passed in as the key parameter
 			this.setState({
 				modalEditVisible: false,
+				content: content,
 			});
 		} else {
 			message.error(result.message);
 		}
 	};
+
+	concantContent(pre, block, post) {
+		if (pre.length > 0) {
+			pre = pre + divider;
+		}
+		if (post.length > 0) {
+			block = block + divider;
+		}
+
+		return pre + block + post;
+	}
 
 	// controls display for "Code"
 	editFormatContentCode = (content) => {
@@ -360,12 +392,6 @@ class Content extends Component {
 		content = content.replace(/([^"#])(https?:\/\/[^\n [(<]+)/g, '$1<a href="$2">$2</a>'); // convert http:// to links but watch href="http:// and http://link/#http://site/
 
 		return content;
-	};
-
-	displayModal = () => {
-		this.setState({
-			content: this.props.content ? this.props.content : "",
-		});
 	};
 
 	render() {
@@ -470,7 +496,7 @@ class Content extends Component {
 								className="ant-input"
 								ref={this.editRef}
 								placeholder="Enter new note ..."
-								value={this.state.content}
+								value={this.state.contentEdit}
 								spellCheck={this.state.spellCheck}
 								onChange={this.changeContent}
 								onKeyDown={this.editKeyDown}
@@ -478,7 +504,7 @@ class Content extends Component {
 						</div>
 						<ReactMarkdown
 							className="markdown-body"
-							source={this.state.content}
+							source={this.state.contentEdit}
 							renderers={this.markdownRenderers}
 							sourcePos={true}
 						/>

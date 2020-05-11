@@ -184,6 +184,15 @@ pre {
 .markdown-body blockquote>:last-child {
 	margin-bottom: 0;
 }
+.markdown-body .anticon-edit{
+	color:rgb(0, 0, 0, 0.08);
+}
+.markdown-body .anticon-edit:hover{
+	color:#1890ff;
+}
+.modal-edit .markdown-body .anticon-edit{
+	display:none;
+}
 
 /* tables */
 .markdown-body table tr {

@@ -14,14 +14,14 @@ class Content extends Component {
 
 		this.state = {
 			id: this.props.id,
+
 			content: this.props.content ? this.props.content : "",
-			contentCachePre: "", // value that is written back into "content" when Cancel is pushed
+			contentEdit: this.props.content ? this.props.content : "",
+			contentCachePre: "", // "cache" are values that is written back into "content" (for "Cancel" or unedited portions of markdown)
 			contentCacheBlock: "",
 			contentCachePost: "",
-			contentEdit: this.props.content ? this.props.content : "",
-			spellCheck: false,
+
 			modalEditVisible: false,
-			pasteText: "",
 		};
 	}
 
@@ -79,6 +79,7 @@ class Content extends Component {
 		},
 	};
 
+	// FindBlock looks through the content and tries to split it into
 	FindBlock = (sourcepos) => {
 		const { content } = this.state;
 		const lines = content.split(/\r?\n/);
@@ -119,16 +120,7 @@ class Content extends Component {
 		return [pre, block, post];
 	};
 
-	// update the state of TreeNode.title every time title is changed
-	changeContent = (e) => {
-		const { value } = e.target;
-
-		this.setState({
-			contentEdit: value,
-		});
-	};
-
-	editShow = () => {
+	editorShow = () => {
 		this.setState({
 			modalEditVisible: true,
 			contentEdit: this.state.content,
@@ -138,7 +130,7 @@ class Content extends Component {
 		});
 	};
 
-	editCancel = () => {
+	editorCancel = () => {
 		this.setState({
 			modalEditVisible: false,
 			content: this.concantContent(this.state.contentCachePre, this.state.contentCacheBlock, this.state.contentCachePost),
@@ -154,9 +146,10 @@ class Content extends Component {
 		if (result.status === "success") {
 			message.success(result.message);
 
-			// change it to the tab they passed in as the key parameter
+			// close the modal and update the content
 			this.setState({
 				modalEditVisible: false,
+				contentEdit: content, // if you do not update contentEdit, you can see the modal content revert back to original opening value before it closes
 				content: content,
 			});
 		} else {
@@ -183,7 +176,7 @@ class Content extends Component {
 		return (
 			<div>
 				<div style={{ margin: "10px 0" }}>
-					<Button onClick={this.editShow} type="primary" icon="edit">
+					<Button onClick={this.editorShow} type="primary" icon="edit">
 						Edit
 					</Button>
 				</div>
@@ -202,7 +195,7 @@ class Content extends Component {
 				<Editor
 					visible={this.state.modalEditVisible}
 					onSave={this.saveContent}
-					onCancel={this.editCancel}
+					onCancel={this.editorCancel}
 					content={this.state.contentEdit}
 				/>
 			</div>

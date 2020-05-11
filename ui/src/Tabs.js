@@ -51,6 +51,13 @@ class Tabs extends Component {
 						</div>
 					</div>
 				</li>
+				<li className="tab add" hidden={this.state.locked}>
+					<div className="title">
+						<div>
+							Reload <Icon type="sync" />
+						</div>
+					</div>
+				</li>
 				<li className="lock" onClick={this.toggleLock}>
 					<Icon type={this.state.locked ? "lock" : "unlock"} />
 				</li>

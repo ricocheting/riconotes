@@ -72,19 +72,23 @@ func (sv *Server) Listen(ip string, port string, debug bool) {
 	api.GET("/", sv.getTree)
 
 	// add new parent to tree
-	api.POST("/", sv.insertTreeParent)
+	api.POST("/nodes/", sv.insertTreeParent)
+
 	// add new child to tree
-	api.POST("/:id/child", sv.insertTreeChild)
+	api.POST("/nodes/:id/child", sv.insertTreeChild)
 
 	// display node content
-	api.GET("/:id", sv.getNode)
+	api.GET("/nodes/:id", sv.getNode)
 	// update node content
-	api.PUT("/:id", sv.checkContentType, sv.putNode)
+	api.PUT("/nodes/:id", sv.checkContentType, sv.putNode)
 	// remove node content
-	api.DELETE("/:id", sv.deleteNode)
+	api.DELETE("/nodes/:id", sv.deleteNode)
 
 	// update tree info (node title, node expand)
-	api.PATCH("/:id", sv.checkContentType, sv.patchNode)
+	api.PATCH("/nodes/:id", sv.checkContentType, sv.patchNode)
+
+	// add new child to tree
+	api.POST("/action/reload", sv.actionReload)
 
 	sv.r.NoRoute(func(ctx *gin.Context) {
 		dir, file := path.Split(ctx.Request.RequestURI)

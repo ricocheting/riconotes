@@ -41,17 +41,17 @@ class Api {
 	}
 
 	getNode(id) {
-		const url = Setting.API_ENDPOINT + "/" + id;
+		const url = Setting.API_ENDPOINT + "/nodes/" + id;
 		return this.myFetch(url, "GET");
 	}
 
 	deleteNode(id) {
-		const url = Setting.API_ENDPOINT + "/" + id;
+		const url = Setting.API_ENDPOINT + "/nodes/" + id;
 		return this.myFetch(url, "DELETE");
 	}
 
 	putNode(id, content) {
-		const url = Setting.API_ENDPOINT + "/" + id;
+		const url = Setting.API_ENDPOINT + "/nodes/" + id;
 
 		const body = {
 			content: content,
@@ -61,7 +61,7 @@ class Api {
 	}
 
 	patchNode(id, title = "", expand = false) {
-		const url = Setting.API_ENDPOINT + "/" + id;
+		const url = Setting.API_ENDPOINT + "/nodes/" + id;
 
 		const body = {
 			title: title,
@@ -72,11 +72,11 @@ class Api {
 	}
 
 	insertTreeParent() {
-		const url = Setting.API_ENDPOINT + "/";
+		const url = Setting.API_ENDPOINT + "/nodes/";
 		return this.myFetch(url, "POST");
 	}
 	insertTreeChild(id) {
-		const url = Setting.API_ENDPOINT + "/" + id + "/child";
+		const url = Setting.API_ENDPOINT + "/nodes/" + id + "/child";
 		return this.myFetch(url, "POST");
 	}
 

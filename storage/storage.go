@@ -68,18 +68,18 @@ func New(cachePath string, init bool) (*Store, error) {
 		}
 	}
 
-	if err := st.loadTree(); err != nil {
+	if err := st.LoadTree(); err != nil {
 		return st, err
 	}
 
-	if err := st.loadSettings(); err != nil {
+	if err := st.LoadSettings(); err != nil {
 		return st, err
 	}
 
 	return st, nil
 }
 
-func (st *Store) loadSettings() error {
+func (st *Store) LoadSettings() error {
 	st.mux.Lock()
 	defer st.mux.Unlock()
 
@@ -129,7 +129,7 @@ func (st *Store) ExistsTree() bool {
 	return true
 }
 
-func (st *Store) loadTree() error {
+func (st *Store) LoadTree() error {
 	st.mux.RLock()
 	defer st.mux.RUnlock()
 

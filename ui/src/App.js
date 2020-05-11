@@ -78,6 +78,16 @@ class App extends Component {
 		}
 	};
 
+	reload = async () => {
+		const result = await Api.actionReload();
+
+		if (result.status === "success") {
+			this.setState({ masterTree: result.payload.tree });
+		} else {
+			message.error(result.message);
+		}
+	};
+
 	//#######################################
 	setNode = (id) => {
 		if (Array.isArray(id)) {
@@ -397,6 +407,7 @@ class App extends Component {
 							deleteNode={this.deleteNode}
 							saveNodeTitle={this.saveNodeTitle}
 							addParentNode={this.addNodeParent}
+							reload={this.reload}
 						/>
 						<EditBar
 							node={this.activeNode()}

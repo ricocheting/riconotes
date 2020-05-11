@@ -80,15 +80,10 @@ class Api {
 		return this.myFetch(url, "POST");
 	}
 
-	/*	putPaths(paths: PathProps[]) {
-		const url = Setting.API_ENDPOINT + "/paths";
-
-		const body = {
-			paths: paths,
-		};
-
-		return this.myFetch(url, "PUT", body);
-	}*/
+	actionReload() {
+		const url = Setting.API_ENDPOINT + "/action/reload";
+		return this.myFetch(url, "POST");
+	}
 }
 
 export default new Api();

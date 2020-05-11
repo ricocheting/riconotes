@@ -51,7 +51,7 @@ class Tabs extends Component {
 						</div>
 					</div>
 				</li>
-				<li className="tab add" hidden={this.state.locked}>
+				<li className="tab add" hidden={this.state.locked} onClick={this.props.reload}>
 					<div className="title">
 						<div>
 							Reload <Icon type="sync" />

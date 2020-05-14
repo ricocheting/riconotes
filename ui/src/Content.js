@@ -60,7 +60,7 @@ class Content extends Component {
 				`h${props.level}`,
 				props,
 				<>
-					{props.children}{" "}
+					{props.children}
 					<Icon
 						type="edit"
 						onClick={() => {
@@ -123,6 +123,11 @@ class Content extends Component {
 			pre = pre + divider;
 		}
 		if (post.length > 0) {
+			// force doublespace between blocks as long as it wasn't the last block
+			if (section.substr(-1) !== divider && post.length > 0) {
+				section = section + divider;
+			}
+
 			section = section + divider;
 		}
 

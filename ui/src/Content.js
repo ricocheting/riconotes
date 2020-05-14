@@ -54,13 +54,13 @@ class Content extends Component {
 			if (!props) {
 				props = { level: 1 };
 			}
-			const children = props.children[0] ? props.children[0].props.value : "";
-			// example taken from https://github.com/rexxars/react-markdown/blob/master/src/renderers.js#L66
+
+			// example taken from https://github.com/rexxars/react-markdown/blob/c63dccb8185869cfc73c257d098a123ef7a7cd33/src/renderers.js#L66
 			return React.createElement(
 				`h${props.level}`,
 				props,
 				<>
-					{children}{" "}
+					{props.children}{" "}
 					<Icon
 						type="edit"
 						onClick={() => {

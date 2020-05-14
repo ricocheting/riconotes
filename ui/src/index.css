@@ -168,7 +168,7 @@ pre {
 .markdown-body hr{
 	height:0;
 	border:0;
-	border-top:1px dotted gray;
+	border-top:1px dashed gray;
 }
 .markdown-body b {
 	color: rgba(0,0,0,.80);
@@ -184,15 +184,26 @@ pre {
 .markdown-body blockquote>:last-child {
 	margin-bottom: 0;
 }
+
+/* markdown headers and edit button */
+.markdown-body h1,.markdown-body h2,.markdown-body h3,.markdown-body h4,.markdown-body h5,.markdown-body h6{
+	color: rgb(0, 0, 0, 0.65);
+	position:relative;
+}
+.markdown-body h1{
+	border-bottom:1px solid rgb(0, 0, 0, 0.15);
+}
 .markdown-body .anticon-edit{
-	color:rgb(0, 0, 0, 0.08);
+	color:rgba(0, 0, 0, 0.1);
+	font-size:16px;
+	position:absolute;
+	bottom:2px;
+	right:0px;
 }
 .markdown-body .anticon-edit:hover{
 	color:#1890ff;
 }
-.modal-edit .markdown-body .anticon-edit{
-	display:none;
-}
+
 
 /* tables */
 .markdown-body table tr {

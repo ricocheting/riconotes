@@ -5,7 +5,8 @@ import Api from "./Api";
 import Tabs from "./Tabs";
 import TreeChildren from "./Tree";
 import EditBar from "./EditBar";
-import { Row, Col, Icon, Button, message } from "antd";
+import { Row, Col, Button, message } from "antd";
+import { PlusCircleOutlined, PlusCircleTwoTone } from "@ant-design/icons";
 const ButtonGroup = Button.Group;
 
 let defaultExpandedKeys = [];
@@ -435,11 +436,11 @@ class App extends Component {
 							<div className="treeAddBtn">
 								<ButtonGroup size="small">
 									<Button onClick={() => this.addNodeChild(this.state.activeTabID)}>
-										<Icon type="plus-circle" theme="twoTone" />
+										<PlusCircleTwoTone />
 										Add
 									</Button>
 									<Button onClick={() => this.addNodeChild(this.state.activeTreeID)}>
-										<Icon type="plus-circle" />
+										<PlusCircleOutlined />
 										Add Child
 									</Button>
 								</ButtonGroup>

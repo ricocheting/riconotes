@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import Api from "./Api";
 import Editor from "./Editor";
-import { Button, Empty, Icon, message } from "antd";
+import { Button, Empty, message } from "antd";
+import { EditOutlined } from "@ant-design/icons";
 import ReactMarkdown from "react-markdown";
 
 const divider = `\n`;
@@ -61,8 +62,7 @@ class Content extends Component {
 				props,
 				<>
 					{props.children}
-					<Icon
-						type="edit"
+					<EditOutlined
 						onClick={() => {
 							const [pre, section, post] = this.FindSection(props["data-sourcepos"]);
 							this.setState({

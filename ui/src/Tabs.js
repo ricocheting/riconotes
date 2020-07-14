@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Icon } from "antd";
+import { PlusCircleOutlined, ReloadOutlined, LockOutlined, UnlockOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 class Tabs extends Component {
 	constructor(props) {
@@ -47,19 +47,19 @@ class Tabs extends Component {
 				<li className="tab add" hidden={this.state.locked} onClick={this.props.addParentNode}>
 					<div className="title">
 						<div>
-							Add Tab <Icon type="plus-circle" />
+							Add Tab <PlusCircleOutlined />
 						</div>
 					</div>
 				</li>
 				<li className="tab add" hidden={this.state.locked} onClick={this.props.reload}>
 					<div className="title">
 						<div>
-							Reload <Icon type="sync" />
+							Reload <ReloadOutlined />
 						</div>
 					</div>
 				</li>
 				<li className="lock" onClick={this.toggleLock}>
-					<Icon type={this.state.locked ? "lock" : "unlock"} />
+					{this.state.locked ? <LockOutlined /> : <UnlockOutlined />}
 				</li>
 			</ul>
 		);
@@ -133,8 +133,8 @@ class TabChild extends Component {
 					</div>
 				</div>
 				<div className="icons-list" hidden={this.props.locked}>
-					<Icon type="edit" onClick={this.editableNode} />
-					<Icon type="delete" onClick={() => this.props.deleteNode(this.props.tree.id)} />
+					<EditOutlined onClick={this.editableNode} />
+					<DeleteOutlined onClick={() => this.props.deleteNode(this.props.tree.id)} />
 				</div>
 			</li>
 		);

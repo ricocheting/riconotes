@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Popconfirm, Button, Input, Checkbox, Icon } from "antd";
+import { Popconfirm, Button, Input, Checkbox } from "antd";
+import { EditOutlined } from "@ant-design/icons";
 
 const InputGroup = Input.Group;
 
@@ -143,7 +144,7 @@ class EditBar extends Component {
 				<div hidden={this.state.editing}>
 					<h2>{this.state.title}</h2>
 
-					<Icon type="edit" onClick={this.onEditing} title={"node #" + this.props.node.id} />
+					<EditOutlined onClick={this.onEditing} title={"node #" + this.props.node.id} />
 
 					<ExpandButton node={this.props.node} onExpand={this.onExpand} expand={this.state.expand} />
 				</div>

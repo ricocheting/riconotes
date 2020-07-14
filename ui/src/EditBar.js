@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Popconfirm, Button, Input, Checkbox } from "antd";
-import { EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, SaveOutlined, EditOutlined } from "@ant-design/icons";
 
 const InputGroup = Input.Group;
 
@@ -23,7 +23,7 @@ const DeleteButton = (props) => {
 
 	return (
 		<Popconfirm placement="bottomRight" title="Are you sure?" onConfirm={props.onDelete} okText="Yes" cancelText="No">
-			<Button title={"Delete node #" + props.node.id} type="danger" icon="delete">
+			<Button title={"Delete node #" + props.node.id} type="primary" danger icon={<DeleteOutlined />}>
 				Delete
 			</Button>
 		</Popconfirm>
@@ -135,7 +135,7 @@ class EditBar extends Component {
 							style={{ width: 300 }}
 						/>
 						<Button onClick={this.onEditingCancel}>Cancel</Button>
-						<Button onClick={this.onSubmitTitle} type="primary" icon="save">
+						<Button onClick={this.onSubmitTitle} type="primary" icon={<SaveOutlined />}>
 							Save
 						</Button>
 					</InputGroup>

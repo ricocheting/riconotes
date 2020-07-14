@@ -1,5 +1,16 @@
 import React, { Component } from "react";
 import { Modal, Button } from "antd";
+import {
+	BoldOutlined,
+	ItalicOutlined,
+	StrikethroughOutlined,
+	UnorderedListOutlined,
+	OrderedListOutlined,
+	LineOutlined,
+	FileDoneOutlined,
+	SnippetsOutlined,
+} from "@ant-design/icons";
+
 import ReactMarkdown from "react-markdown";
 
 const ButtonGroup = Button.Group;
@@ -174,10 +185,7 @@ class Editor extends Component {
 
 				// collapse all
 				let preSelect = val.substring(0, start),
-					newSelect = val
-						.substring(start, end)
-						.replace(/\n\t/g, "\n")
-						.replace(/^\t/g, ""),
+					newSelect = val.substring(start, end).replace(/\n\t/g, "\n").replace(/^\t/g, ""),
 					postSelect = val.substring(end);
 
 				// find the "last" \n char of the first selected line (will be before the selected part) and see if it needs \t after it removed
@@ -277,12 +285,12 @@ class Editor extends Component {
 			<div>
 				<Modal
 					className="contentPasteModal"
-					title="Insert HTML"
+					title="Text Converter"
 					visible={this.state.modalPasteVisible}
 					onOk={this.pasteModalOk}
 					onCancel={this.pasteModalCancel}>
 					<textarea
-						placeholder="Paste code here..."
+						placeholder="Paste text here..."
 						rows={10}
 						onChange={this.pasteModalChangeContent}
 						value={this.state.pasteText}
@@ -298,9 +306,12 @@ class Editor extends Component {
 					onCancel={() => this.props.onCancel()}>
 					<div className="modal-edit-buttons">
 						<ButtonGroup>
-							<Button onClick={() => this.editInsert("**", "**")} icon="bold" title="Bold"></Button>
-							<Button onClick={() => this.editInsert("*", "*")} icon="italic" title="Italic"></Button>
-							<Button onClick={() => this.editInsert("~~", "~~")} icon="strikethrough" title="Strikethrough"></Button>
+							<Button onClick={() => this.editInsert("**", "**")} icon={<BoldOutlined />} title="Bold"></Button>
+							<Button onClick={() => this.editInsert("*", "*")} icon={<ItalicOutlined />} title="Italic"></Button>
+							<Button
+								onClick={() => this.editInsert("~~", "~~")}
+								icon={<StrikethroughOutlined />}
+								title="Strikethrough"></Button>
 						</ButtonGroup>
 						<ButtonGroup>
 							<Button onClick={() => this.contentManipulate("", "# ", "", "")} title="Heading 1">
@@ -316,17 +327,17 @@ class Editor extends Component {
 						<ButtonGroup>
 							<Button
 								onClick={() => this.contentManipulate("", "* ", "", "")}
-								icon="unordered-list"
+								icon={<UnorderedListOutlined />}
 								title="Unordered List"></Button>
 							<Button
 								onClick={() => this.contentManipulate("", "1. ", "", "")}
-								icon="ordered-list"
+								icon={<OrderedListOutlined />}
 								title="Ordered List"></Button>
 						</ButtonGroup>
 						<ButtonGroup>
 							<Button
 								onClick={() => this.contentManipulate("", "", "", "-------------------------\n")}
-								icon="line"
+								icon={<LineOutlined />}
 								title="Horizontal Rule"></Button>
 						</ButtonGroup>
 
@@ -335,14 +346,14 @@ class Editor extends Component {
 								type={this.state.spellCheck ? "primary" : "default"}
 								onClick={() => this.setState({ spellCheck: !this.state.spellCheck })}
 								title="Toggle Spellcheck"
-								icon="file-done"></Button>
+								icon={<FileDoneOutlined />}></Button>
 						</ButtonGroup>
 
 						<ButtonGroup>
 							<Button
 								onClick={this.pasteModalShow}
 								title="Convert HTML Links to markdown"
-								icon="snippets"
+								icon={<SnippetsOutlined />}
 								style={{ borderColor: "black" }}></Button>
 						</ButtonGroup>
 					</div>

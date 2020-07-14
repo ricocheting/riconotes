@@ -317,9 +317,8 @@ class Editor extends Component {
 					className="contentPasteModal"
 					title="Text Converter"
 					visible={this.state.modalPasteVisible}
-					onCancel={this.pasteModalCancel}>
-					footer=
-					{[
+					onCancel={this.pasteModalCancel}
+					footer={[
 						<Select defaultValue="table" onChange={this.pasteModalChangeType} key="type">
 							<Option value="table">Create Table</Option>
 							<Option value="link">HTML Links to Markdown</Option>
@@ -330,8 +329,7 @@ class Editor extends Component {
 						<Button key="submit" type="primary" onClick={this.pasteModalOk}>
 							OK
 						</Button>,
-					]}
-					>
+					]}>
 					<textarea
 						placeholder="Paste text here..."
 						rows={10}

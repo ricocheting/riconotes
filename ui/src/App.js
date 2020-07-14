@@ -403,7 +403,7 @@ class App extends Component {
 		return (
 			<div className="container">
 				<Row>
-					<Col>
+					<Col className="header-col">
 						<Tabs
 							activeTabID={this.state.activeTabID}
 							setActiveTab={this.setHash}

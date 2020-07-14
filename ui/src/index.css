@@ -19,6 +19,10 @@ body{
 	}
 }
 
+.header-col{
+	width:100%;
+}
+
 /* tab styles */
 ul.tab-bar{
 	display:flex;

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Modal, Button } from "antd";
+import { Modal, Button, Select } from "antd";
 import {
 	BoldOutlined,
 	ItalicOutlined,
@@ -14,6 +14,8 @@ import {
 import ReactMarkdown from "react-markdown";
 
 const ButtonGroup = Button.Group;
+const { Option } = Select;
+
 const divider = `\n`;
 
 class Editor extends Component {
@@ -28,6 +30,7 @@ class Editor extends Component {
 			modalPasteVisible: false,
 			//	modalEditVisible: this.props.visible,
 			pasteText: "",
+			pasteType: "table",
 		};
 	}
 
@@ -72,12 +75,34 @@ class Editor extends Component {
 		});
 	};
 	pasteModalOk = (e) => {
+		const { pasteType, pasteText } = this.state;
 		this.setState({
 			modalPasteVisible: false,
 		});
 
-		// turn HTML into markdown
-		const result = this.state.pasteText.replace(/<a href="([^"]+)">([^<]+)<\/a>/g, "[$2]($1)");
+		// turn into markdown
+		let result = "";
+		if (pasteType === "link") {
+			// turn HTML links into markdown links
+			result = pasteText.replace(/<a href="([^"]+)">([^<]+)<\/a>/g, "[$2]($1)");
+		} else if (pasteType === "table") {
+			// turn tab-deleminated text into markdown table (with header)
+			result = pasteText.replace(/\t/g, "\t|\t");
+
+			// split into lines
+			let lines = result.split(/\r?\n/);
+
+			// find the first line with a \t (so we can make it a header)
+			const index = lines.findIndex((line) => {
+				return line.indexOf("\t") !== -1;
+			});
+
+			// add a header divider
+			if (index !== -1) {
+				lines.splice(index + 1, 0, `---\t|\t---`);
+				result = lines.join(divider);
+			}
+		}
 
 		this.editInsert(result, "");
 	};
@@ -86,6 +111,11 @@ class Editor extends Component {
 
 		this.setState({
 			pasteText: value,
+		});
+	};
+	pasteModalChangeType = (value) => {
+		this.setState({
+			pasteType: value,
 		});
 	};
 
@@ -259,26 +289,26 @@ class Editor extends Component {
 	}
 
 	// controls display for "Code"
-	editFormatContentCode = (content) => {
-		content = content.replace(/(^|\n)### ([^\n]+)\n/g, "$1<h3>$2</h3>"); // header tags. run before <hr> or <ul> strips out \n
-		content = content.replace(/(^|\n)## ([^\n]+)\n/g, "$1<h2>$2</h2>");
-		content = content.replace(/(^|\n)# ([^\n]+)\n/g, "$1<h1>$2</h1>");
+	// editFormatContentCode = (content) => {
+	// 	content = content.replace(/(^|\n)### ([^\n]+)\n/g, "$1<h3>$2</h3>"); // header tags. run before <hr> or <ul> strips out \n
+	// 	content = content.replace(/(^|\n)## ([^\n]+)\n/g, "$1<h2>$2</h2>");
+	// 	content = content.replace(/(^|\n)# ([^\n]+)\n/g, "$1<h1>$2</h1>");
 
-		content = content.replace(/\n-{3,}(\n|$)/g, "<hr />"); // replace --- (or more) with <hr>
-		content = content.replace(/\n*<hr ?\/?>\n*/gi, "<hr />"); // remove newline spacing before/after <hr>
+	// 	content = content.replace(/\n-{3,}(\n|$)/g, "<hr />"); // replace --- (or more) with <hr>
+	// 	content = content.replace(/\n*<hr ?\/?>\n*/gi, "<hr />"); // remove newline spacing before/after <hr>
 
-		content = content.replace(/\n*(<\/?[uo]l>)\n*/gi, "$1"); // remove newline spacing before/after <ul><ol></ul></ol>
-		content = content.replace(/\n*(<\/?li>)\n*/gi, "$1"); // <li></li>
+	// 	content = content.replace(/\n*(<\/?[uo]l>)\n*/gi, "$1"); // remove newline spacing before/after <ul><ol></ul></ol>
+	// 	content = content.replace(/\n*(<\/?li>)\n*/gi, "$1"); // <li></li>
 
-		content = content.replace(/```(?:[a-z]*)\n([^`]+)\n```(?:\n|$)/g, "<code>$1</code>\n"); // block <code></code>
-		content = content.replace(/`([^`]+)`/g, '<code class="inline">$1</code>'); // inline <code></code>
+	// 	content = content.replace(/```(?:[a-z]*)\n([^`]+)\n```(?:\n|$)/g, "<code>$1</code>\n"); // block <code></code>
+	// 	content = content.replace(/`([^`]+)`/g, '<code class="inline">$1</code>'); // inline <code></code>
 
-		content = content.replace(/(?:(\n|[^:]))(\/\/[^\n]+)/g, '$1<span class="comment">$2</span>'); // comment but not :// in links
+	// 	content = content.replace(/(?:(\n|[^:]))(\/\/[^\n]+)/g, '$1<span class="comment">$2</span>'); // comment but not :// in links
 
-		content = content.replace(/([^"#])(https?:\/\/[^\n [(<]+)/g, '$1<a href="$2">$2</a>'); // convert http:// to links but watch href="http:// and http://link/#http://site/
+	// 	content = content.replace(/([^"#])(https?:\/\/[^\n [(<]+)/g, '$1<a href="$2">$2</a>'); // convert http:// to links but watch href="http:// and http://link/#http://site/
 
-		return content;
-	};
+	// 	return content;
+	// };
 
 	render() {
 		return (
@@ -287,8 +317,18 @@ class Editor extends Component {
 					className="contentPasteModal"
 					title="Text Converter"
 					visible={this.state.modalPasteVisible}
-					onOk={this.pasteModalOk}
-					onCancel={this.pasteModalCancel}>
+					footer={[
+						<Select defaultValue="table" onChange={this.pasteModalChangeType} key="type">
+							<Option value="table">Create Table</Option>
+							<Option value="link">HTML Links to Markdown</Option>
+						</Select>,
+						<Button key="back" onClick={this.pasteModalCancel}>
+							Cancel
+						</Button>,
+						<Button key="submit" type="primary" onClick={this.pasteModalOk}>
+							OK
+						</Button>,
+					]}>
 					<textarea
 						placeholder="Paste text here..."
 						rows={10}

@@ -19,10 +19,6 @@ body{
 	}
 }
 
-.header-col{
-	width:100%;
-}
-
 /* tab styles */
 ul.tab-bar{
 	display:flex;
@@ -54,7 +50,7 @@ ul.tab-bar li.tab .title>div{/*so the title text expands full width of "tab" and
 
 ul.tab-bar li.tab.active{
 	background-color:white;
-	/*border-bottom:1px solid white;*/
+	z-index: 5;
 	color:#1890ff;
 	margin-bottom:-1px;
 }
@@ -73,6 +69,7 @@ ul.tab-bar li.lock{
 	flex: 1 0;
 	text-align:right;
 	cursor: pointer;
+	min-height:31px;
 }
 
 /* bar under the tabs for editing the current node */
@@ -96,7 +93,7 @@ ul.tab-bar li.lock{
 }
 .treeAddBtn{
 	text-align:center;
-	border-top:1px solid gray;
+	border-bottom:1px solid gray;
 	padding: 7px 0;
 }
 @media all and (max-width: 992px){

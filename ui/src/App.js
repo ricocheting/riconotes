@@ -403,7 +403,7 @@ class App extends Component {
 		return (
 			<div className="container">
 				<Row>
-					<Col className="header-col">
+					<Col span={24}>
 						<Tabs
 							activeTabID={this.state.activeTabID}
 							setActiveTab={this.setHash}
@@ -413,6 +413,10 @@ class App extends Component {
 							addParentNode={this.addNodeParent}
 							reload={this.reload}
 						/>
+					</Col>
+				</Row>
+				<Row>
+					<Col span={24}>
 						<EditBar
 							node={this.activeNode()}
 							deleteNode={this.deleteNode}
@@ -423,29 +427,28 @@ class App extends Component {
 					</Col>
 				</Row>
 
-				<Row gutter={16}>
-					<Col xs={24} lg={6}>
-						<aside className="tree">
-							<TreeChildren
-								tree={this.state.masterTree}
-								activeTabID={this.state.activeTabID}
-								activeTreeID={this.state.activeTreeID}
-								expandedKeys={defaultExpandedKeys}
-								displayNode={this.setNode}
-							/>
-							<div className="treeAddBtn">
-								<ButtonGroup size="small">
-									<Button onClick={() => this.addNodeChild(this.state.activeTabID)}>
-										<PlusCircleTwoTone />
-										Add
-									</Button>
-									<Button onClick={() => this.addNodeChild(this.state.activeTreeID)}>
-										<PlusCircleOutlined />
-										Add Child
-									</Button>
-								</ButtonGroup>
-							</div>
-						</aside>
+				<Row>
+					<Col xs={24} lg={6} className="tree">
+						<div className="treeAddBtn">
+							<ButtonGroup size="small">
+								<Button onClick={() => this.addNodeChild(this.state.activeTabID)}>
+									<PlusCircleTwoTone />
+									New Node
+								</Button>
+								<Button onClick={() => this.addNodeChild(this.state.activeTreeID)}>
+									<PlusCircleOutlined />
+									Add Child
+								</Button>
+							</ButtonGroup>
+						</div>
+						<TreeChildren
+							tree={this.state.masterTree}
+							activeTabID={this.state.activeTabID}
+							activeTreeID={this.state.activeTreeID}
+							expandedKeys={defaultExpandedKeys}
+							displayNode={this.setNode}
+							addNodeChild={this.addNodeChild}
+						/>
 					</Col>
 
 					<Col xs={24} lg={18}>

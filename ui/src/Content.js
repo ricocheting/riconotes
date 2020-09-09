@@ -180,7 +180,7 @@ class Content extends Component {
 		}
 
 		return (
-			<div>
+			<div style={{ marginLeft: "16px" }}>
 				<div style={{ margin: "10px 0" }}>
 					<Button onClick={this.editorShow} type="primary" icon={<EditOutlined />}>
 						Edit

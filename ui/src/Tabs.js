@@ -31,7 +31,6 @@ class Tabs extends Component {
 				<TabChild
 					activeTabID={this.props.activeTabID}
 					isActive={this.isActive(node.id)}
-					setActiveTab={this.props.setActiveTab}
 					deleteNode={this.props.deleteNode}
 					saveNodeTitle={this.props.saveNodeTitle}
 					key={node.id}

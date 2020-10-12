@@ -136,7 +136,10 @@ class App extends Component {
 		}
 
 		// change the location. which triggers the handleNewHash() listener assigned in componentDidMount() which triggers displayNodeHash()
-		window.location.href = window.location.href.replace(/#(.*)$/, "") + newHash;
+		var newLocation = window.location.href.replace(/#(.*)$/, "") + newHash;
+		if (window.location.href !== newLocation) {
+			window.location.href = newLocation;
+		}
 	};
 
 	getHash = () => {
@@ -406,7 +409,6 @@ class App extends Component {
 					<Col span={24}>
 						<Tabs
 							activeTabID={this.state.activeTabID}
-							setActiveTab={this.setHash}
 							tree={this.state.masterTree}
 							deleteNode={this.deleteNode}
 							saveNodeTitle={this.saveNodeTitle}

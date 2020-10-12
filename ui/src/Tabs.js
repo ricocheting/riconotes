@@ -128,9 +128,9 @@ class TabChild extends Component {
 							ref={this.lastInput}
 						/>
 					</div>
-					<div hidden={this.state.editing} onClick={() => this.props.setActiveTab(this.props.tree.id)}>
+					<a hidden={this.state.editing} href={"#" + this.props.tree.id}>
 						{this.state.title}
-					</div>
+					</a>
 				</div>
 				<div className="icons-list" hidden={this.props.locked}>
 					<EditOutlined onClick={this.editableNode} />

@@ -43,7 +43,7 @@ ul.tab-bar li.tab:hover{
 	background-color:white;
 	color:#1890ff;
 }
-ul.tab-bar li.tab .title>a{/*so the title text expands full width of "tab" and there's not unclickable dead area on the sides; put the padding here*/
+ul.tab-bar li.tab .title>a, ul.tab-bar li.tab .title>div{/*so the title text expands full width of "tab" and there's not unclickable dead area on the sides; put the padding here*/
 	padding: 4px 10px;
 	white-space:nowrap;
 	display:block;

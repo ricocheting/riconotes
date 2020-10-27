@@ -92,40 +92,21 @@ ul.tab-bar li.lock{
 	padding:10px 0 0 0;
 	box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
 }
-.treeAddBtn{
-	text-align:center;
-	border-bottom:1px solid gray;
-	padding: 7px 0;
-}
 @media all and (max-width: 992px){
 	.tree{
 		box-shadow: none;
 	}
 }
-.tree>ul{
-	margin:0;
-	padding:0;
+.tree .ant-tree-treenode .controls{
+	float:right;
+	display:none;
 }
-.tree li{
-	margin:0;
-	padding:0;
-	display:block;
-}
-.tree li>.title{
-	cursor:default;
-	border: 1px solid transparent;
-}
-.tree li.active>.title{
-	border: 1px solid #1890ff;
-}
-.tree li>div{
+.tree .ant-tree-treenode:hover .controls{
 	display:inline-block;
 }
 
+
 /* content/editing */
-/*.contentSaveContainer{
-	margin-top:15px;
-}*/
 .contentBlock{
 	display:flex;
 	height: calc(100vh - 160px);

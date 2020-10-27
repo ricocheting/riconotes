@@ -1,7 +1,22 @@
 import React, { Component } from "react";
-import { Tree, Empty } from "antd";
+import { Tree, Empty, Tooltip } from "antd";
+import { PlusCircleTwoTone } from "@ant-design/icons";
 
 const { TreeNode } = Tree;
+
+
+class TreeControls extends Component {
+	render() {
+		const { id } = this.props;
+
+		return (<div className="controls">
+			<Tooltip placement="left" title="Add Child">
+				<span onClick={(e) => { this.props.addNodeChild(id); e.stopPropagation(); }}><PlusCircleTwoTone /></span>
+			</Tooltip>
+		</div >);
+	}
+}
+
 
 class TreeChildren extends Component {
 	constructor(props) {
@@ -28,6 +43,7 @@ class TreeChildren extends Component {
 				return (
 					<div style={disp} key={item.id}>
 						<Tree
+							blockNode={true}
 							onExpand={this.onExpand}
 							onSelect={this.onSelect}
 							selectedKeys={[this.props.activeTreeID]}
@@ -42,14 +58,17 @@ class TreeChildren extends Component {
 
 	renderTreeNodes = (data) =>
 		data.map((item) => {
+			const title = <>{item.title} <TreeControls id={item.id} addNodeChild={this.props.addNodeChild} /></>
+
 			if (item.children && item.children.length > 0) {
+
 				return (
-					<TreeNode title={item.title} key={item.id} dataRef={item}>
+					<TreeNode title={title} key={item.id}>
 						{this.renderTreeNodes(item.children)}
 					</TreeNode>
 				);
 			}
-			return <TreeNode title={item.title} key={item.id} dataRef={item} />;
+			return <TreeNode title={title} key={item.id} />;
 		});
 
 	onSelect = (selectedKey, info) => {
@@ -62,7 +81,7 @@ class TreeChildren extends Component {
 	};
 
 	onExpand = (expandedKeys, e) => {
-		const id = e.node.props.eventKey;
+		const id = e.node.key;
 
 		if (e.expanded) {
 			this.setState({ expandedKeys: [...this.state.expandedKeys, id] });

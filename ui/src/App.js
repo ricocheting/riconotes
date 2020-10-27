@@ -6,8 +6,7 @@ import Tabs from "./Tabs";
 import TreeChildren from "./Tree";
 import EditBar from "./EditBar";
 import { Row, Col, Button, message } from "antd";
-import { PlusCircleOutlined, PlusCircleTwoTone } from "@ant-design/icons";
-const ButtonGroup = Button.Group;
+import { PlusCircleTwoTone } from "@ant-design/icons";
 
 let defaultExpandedKeys = [];
 
@@ -431,18 +430,6 @@ class App extends Component {
 
 				<Row>
 					<Col xs={24} lg={6} className="tree">
-						<div className="treeAddBtn">
-							<ButtonGroup size="small">
-								<Button onClick={() => this.addNodeChild(this.state.activeTabID)}>
-									<PlusCircleTwoTone />
-									New Node
-								</Button>
-								<Button onClick={() => this.addNodeChild(this.state.activeTreeID)}>
-									<PlusCircleOutlined />
-									Add Child
-								</Button>
-							</ButtonGroup>
-						</div>
 						<TreeChildren
 							tree={this.state.masterTree}
 							activeTabID={this.state.activeTabID}
@@ -451,6 +438,9 @@ class App extends Component {
 							displayNode={this.setNode}
 							addNodeChild={this.addNodeChild}
 						/>
+						<Button onClick={() => this.addNodeChild(this.state.activeTabID)} block style={{ marginTop: "1em" }}>
+							<PlusCircleTwoTone /> New Node
+						</Button>
 					</Col>
 
 					<Col xs={24} lg={18}>

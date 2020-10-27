@@ -4,19 +4,25 @@ import { PlusCircleTwoTone } from "@ant-design/icons";
 
 const { TreeNode } = Tree;
 
-
 class TreeControls extends Component {
 	render() {
 		const { id } = this.props;
 
-		return (<div className="controls">
-			<Tooltip placement="left" title="Add Child">
-				<span onClick={(e) => { this.props.addNodeChild(id); e.stopPropagation(); }}><PlusCircleTwoTone /></span>
-			</Tooltip>
-		</div >);
+		return (
+			<div className="controls">
+				<Tooltip placement="left" title="Add Child">
+					<span
+						onClick={(e) => {
+							this.props.addNodeChild(id);
+							e.stopPropagation();
+						}}>
+						<PlusCircleTwoTone />
+					</span>
+				</Tooltip>
+			</div>
+		);
 	}
 }
-
 
 class TreeChildren extends Component {
 	constructor(props) {
@@ -58,10 +64,13 @@ class TreeChildren extends Component {
 
 	renderTreeNodes = (data) =>
 		data.map((item) => {
-			const title = <>{item.title} <TreeControls id={item.id} addNodeChild={this.props.addNodeChild} /></>
+			const title = (
+				<>
+					{item.title} <TreeControls id={item.id} addNodeChild={this.props.addNodeChild} />
+				</>
+			);
 
 			if (item.children && item.children.length > 0) {
-
 				return (
 					<TreeNode title={title} key={item.id}>
 						{this.renderTreeNodes(item.children)}
@@ -87,7 +96,7 @@ class TreeChildren extends Component {
 			this.setState({ expandedKeys: [...this.state.expandedKeys, id] });
 		} else {
 			// remove the matched id
-			const nExp = this.state.expandedKeys.filter(function(item) {
+			const nExp = this.state.expandedKeys.filter(function (item) {
 				return item !== id;
 			});
 			this.setState({ expandedKeys: nExp });

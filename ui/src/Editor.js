@@ -12,6 +12,7 @@ import {
 } from "@ant-design/icons";
 
 import ReactMarkdown from "react-markdown";
+const gfm = require("remark-gfm");
 
 const ButtonGroup = Button.Group;
 const { Option } = Select;
@@ -414,6 +415,7 @@ class Editor extends Component {
 						<ReactMarkdown
 							className="markdown-body"
 							source={this.state.content}
+							plugins={[gfm]}
 							renderers={this.markdownRenderers}
 							sourcePos={true}
 						/>

@@ -4,6 +4,7 @@ import Editor from "./Editor";
 import { Button, Empty, message } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import ReactMarkdown from "react-markdown";
+const gfm = require("remark-gfm");
 
 const divider = `\n`;
 
@@ -191,6 +192,7 @@ class Content extends Component {
 					<ReactMarkdown
 						className="markdown-body"
 						source={this.state.content}
+						plugins={[gfm]}
 						renderers={this.markdownRenderers}
 						sourcePos={true}
 					/>

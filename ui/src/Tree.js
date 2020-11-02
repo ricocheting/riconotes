@@ -66,7 +66,8 @@ class TreeChildren extends Component {
 		data.map((item) => {
 			const title = (
 				<>
-					{item.title} <TreeControls id={item.id} addNodeChild={this.props.addNodeChild} />
+					<TreeControls id={item.id} addNodeChild={this.props.addNodeChild} />
+					{item.title}
 				</>
 			);
 

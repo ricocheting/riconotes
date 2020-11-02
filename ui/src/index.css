@@ -98,7 +98,8 @@ ul.tab-bar li.lock{
 	}
 }
 .tree .ant-tree-treenode .controls{
-	float:right;
+	position:absolute;
+	right:2px;
 	display:none;
 }
 .tree .ant-tree-treenode:hover .controls{

@@ -341,6 +341,7 @@ class Editor extends Component {
 
 				<Modal
 					className="modal-edit"
+					maskClosable={false}
 					width="auto"
 					visible={this.props.visible}
 					onOk={() => this.props.onSave(this.state.content)}

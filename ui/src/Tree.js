@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Tree, Empty, Tooltip } from "antd";
+import { Tree, Skeleton, Tooltip } from "antd";
 import { PlusCircleTwoTone } from "@ant-design/icons";
 
 const { TreeNode } = Tree;
@@ -107,7 +107,7 @@ class TreeChildren extends Component {
 	render() {
 		// because first run tree is empty
 		if (this.props.tree.length < 1 || !this.props.activeTreeID) {
-			return <Empty description={<span>No tree entries</span>} />;
+			return <Skeleton paragraph={{ rows: 5 }} title={false} />;
 		}
 
 		return this.renderTreeParentNodes(this.props.tree);

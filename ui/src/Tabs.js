@@ -24,21 +24,37 @@ class Tabs extends Component {
 	};
 
 	render() {
-		// pass the props through as a parameter, and map through the array to return a table row for each object in the array
-		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
-		const tabs = this.props.tree.map((node, key) => {
-			return (
-				<TabChild
-					activeTabID={this.props.activeTabID}
-					isActive={this.isActive(node.id)}
-					deleteNode={this.props.deleteNode}
-					saveNodeTitle={this.props.saveNodeTitle}
-					key={node.id}
-					tree={node}
-					locked={this.state.locked}
-				/>
+		let tabs;
+
+		if (this.props.tree.length > 0) {
+			tabs = this.props.tree.map((node, key) => {
+				return (
+					<TabChild
+						activeTabID={this.props.activeTabID}
+						isActive={this.isActive(node.id)}
+						deleteNode={this.props.deleteNode}
+						saveNodeTitle={this.props.saveNodeTitle}
+						key={node.id}
+						tree={node}
+						locked={this.state.locked}
+					/>
+				);
+			});
+		} else {
+			tabs = (
+				<>
+					<li className="tab placeholder">
+						<div className="title"></div>
+					</li>
+					<li className="tab placeholder">
+						<div className="title"></div>
+					</li>
+					<li className="tab placeholder">
+						<div className="title"></div>
+					</li>
+				</>
 			);
-		});
+		}
 
 		return (
 			<ul className="tab-bar">

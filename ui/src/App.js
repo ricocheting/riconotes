@@ -438,7 +438,11 @@ class App extends Component {
 							displayNode={this.setNode}
 							addNodeChild={this.addNodeChild}
 						/>
-						<Button onClick={() => this.addNodeChild(this.state.activeTabID)} block style={{ marginTop: "1em" }}>
+						<Button
+							onClick={() => this.addNodeChild(this.state.activeTabID)}
+							block
+							size="small"
+							style={{ margin: "1em 0 3px 0", borderRight: "0", borderLeft: "0" }}>
 							<PlusCircleTwoTone /> New Node
 						</Button>
 					</Col>

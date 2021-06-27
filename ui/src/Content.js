@@ -37,32 +37,56 @@ class Content extends Component {
 		}
 	}
 
-	markdownRenderers = {
-		// fix for react-markdown tries to link anything in brackets
-		// https://github.com/rexxars/react-markdown/issues/115
-		// https://github.com/rexxars/react-markdown/issues/218
-		// https://github.com/rexxars/react-markdown/issues/276
-		linkReference: (reference) => {
-			// linkReference: (reference: Object): Node => {
-			if (!reference.href) {
-				//return `[${reference.children[0].props.children}]`;
-				return <>[{reference.children[0]}]</>;
-			}
-
-			return <a href={reference.$ref}>{reference.children}</a>;
-		},
-
-		heading: (props) => {
-			if (!props) {
-				props = { level: 1 };
-			}
-
-			// example taken from https://github.com/rexxars/react-markdown/blob/c63dccb8185869cfc73c257d098a123ef7a7cd33/src/renderers.js#L66
+	markdownComponents = {
+		h1: ({ node, inline, className, children, ...props }) => {
+			// original example taken from https://github.com/rexxars/react-markdown/blob/c63dccb8185869cfc73c257d098a123ef7a7cd33/src/renderers.js#L66
 			return React.createElement(
 				`h${props.level}`,
 				props,
 				<>
-					{props.children}
+					{children}
+					<EditOutlined
+						onClick={() => {
+							const [pre, section, post] = this.FindSection(props["data-sourcepos"]);
+							this.setState({
+								modalEditVisible: true,
+								contentCachePre: pre,
+								contentCacheSection: section,
+								contentCachePost: post,
+								contentEdit: section,
+							});
+						}}
+					/>
+				</>
+			);
+		},
+		h2: ({ node, inline, className, children, ...props }) => {
+			return React.createElement(
+				`h${props.level}`,
+				props,
+				<>
+					{children}
+					<EditOutlined
+						onClick={() => {
+							const [pre, section, post] = this.FindSection(props["data-sourcepos"]);
+							this.setState({
+								modalEditVisible: true,
+								contentCachePre: pre,
+								contentCacheSection: section,
+								contentCachePost: post,
+								contentEdit: section,
+							});
+						}}
+					/>
+				</>
+			);
+		},
+		h3: ({ node, inline, className, children, ...props }) => {
+			return React.createElement(
+				`h${props.level}`,
+				props,
+				<>
+					{children}
 					<EditOutlined
 						onClick={() => {
 							const [pre, section, post] = this.FindSection(props["data-sourcepos"]);
@@ -191,9 +215,9 @@ class Content extends Component {
 				{this.state.content.length > 0 ? (
 					<ReactMarkdown
 						className="markdown-body"
-						source={this.state.content}
+						children={this.state.content}
 						plugins={[gfm]}
-						renderers={this.markdownRenderers}
+						components={this.markdownComponents}
 						sourcePos={true}
 					/>
 				) : (

@@ -43,17 +43,6 @@ class Editor extends Component {
 		}
 	}
 
-	markdownRenderers = {
-		// fix for react-markdown tries to link anything in brackets
-		linkReference: (reference) => {
-			if (!reference.href) {
-				return <>[{reference.children[0]}]</>;
-			}
-
-			return <a href={reference.$ref}>{reference.children}</a>;
-		},
-	};
-
 	// update the state of TreeNode.title every time title is changed
 	changeContent = (e) => {
 		const { value } = e.target;
@@ -413,13 +402,7 @@ class Editor extends Component {
 								onKeyDown={this.editKeyDown}
 							/>
 						</div>
-						<ReactMarkdown
-							className="markdown-body"
-							source={this.state.content}
-							plugins={[gfm]}
-							renderers={this.markdownRenderers}
-							sourcePos={true}
-						/>
+						<ReactMarkdown className="markdown-body" children={this.state.content} plugins={[gfm]} sourcePos={true} />
 					</div>
 				</Modal>
 			</div>

@@ -77,21 +77,70 @@ class Editor extends Component {
 			result = pasteText.replace(/<a href="([^"]+)">([^<]+)<\/a>/g, "[$2]($1)");
 		} else if (pasteType === "table") {
 			// turn tab-deleminated text into markdown table (with header)
-			result = pasteText.replace(/\t/g, "\t|\t");
 
 			// split into lines
-			let lines = result.split(/\r?\n/);
+			let rows = pasteText.split(/\r?\n/);
+			let maxColumns = 0;
+			let skippable = [];
 
-			// find the first line with a \t (so we can make it a header)
-			const index = lines.findIndex((line) => {
-				return line.indexOf("\t") !== -1;
+			// see if there are columns we can skip, rows that are completely blank, and get maxColumns
+			rows.forEach((line, indexLine) => {
+				let cols = line.split(/\t/);
+				let allEmpty = true;
+
+				cols.forEach((col, indexCol) => {
+					if (col.length > 0 && indexCol > maxColumns) {
+						maxColumns = indexCol;
+					}
+
+					if (indexLine === 0) {
+						if (col.length === 0) {
+							skippable[indexCol] = true;
+						}
+					} else if (col.length > 0 && skippable[indexCol]) {
+						// if it was skippable, but filled out here then we need it
+						skippable.splice(indexCol, 1);
+					}
+
+					if (col.length > 0) {
+						allEmpty = false;
+					}
+				});
+
+				if (allEmpty) {
+					rows.splice(indexLine, 1);
+				}
 			});
 
-			// add a header divider
-			if (index !== -1) {
-				lines.splice(index + 1, 0, `---\t|\t---`);
-				result = lines.join(divider);
-			}
+			// build the table
+			rows.forEach((line, indexLine) => {
+				let cols = line.split(/\t/);
+
+				// the first row, treat as a header
+				if (indexLine === 0) {
+					let splitter = "";
+					for (let i = 0; i <= maxColumns; i++) {
+						if (!skippable[i]) {
+							result += cols[i] + "\t|\t";
+							splitter += "---|";
+						}
+					}
+					// strip off the last tabstuff
+					result = result.substring(0, result.length - 3);
+
+					result += divider + "|" + splitter;
+				} else {
+					for (let i = 0; i <= maxColumns; i++) {
+						if (!skippable[i]) {
+							result += cols[i] + "\t|\t";
+						}
+					}
+
+					// strip off the last tabstuff
+					result = result.substring(0, result.length - 3);
+				}
+				result += divider;
+			});
 		}
 
 		this.editInsert(result, "");

@@ -9,3 +9,7 @@ http://www.iconarchive.com/show/farm-fresh-icons-by-fatcow/document-notes-icon.h
 # TODO
 * replace any occurance of searchTree() with nfind() in App.js
 * rewrite entire App.js to use a "tree" object with a function to find node, parent, update node or parts of node
+* when updating a node, send a date of node. so if node is edited between retrieve and save, will warn about overwriting possible changes
+
+# Changelog
+*	**2021-06-27 (v1.1)** : updated react. pasteModal handles tables properly again

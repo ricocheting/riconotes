@@ -90,9 +90,18 @@ ul.tab-bar li.lock{
 	border:1px solid gray;
 	min-height:60px;
 }
-.header-bar>div>*{
+.header-bar>div>h2{
 	display:inline-block;
 	margin:0 20px 0 0;
+}
+.header-bar>div>.anticon-edit{
+	display:inline-block;
+	margin:0 10px 0 0;
+	color: silver;
+}
+.header-bar>div>.expanded{
+	margin:0;
+	color: silver;
 }
 
 /* tree styles */

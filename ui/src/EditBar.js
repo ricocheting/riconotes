@@ -10,7 +10,7 @@ const ExpandButton = (props) => {
 	}
 
 	return (
-		<Checkbox onChange={props.onExpand} checked={props.expand}>
+		<Checkbox onChange={props.onExpand} checked={props.expand} className="expanded">
 			Expanded
 		</Checkbox>
 	);

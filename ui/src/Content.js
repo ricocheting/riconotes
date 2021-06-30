@@ -119,7 +119,7 @@ class Content extends Component {
 		let level = 0;
 		if (lines[lineNo]) {
 			const result = reHeading.exec(lines[lineNo]);
-			if (result.length > 1) {
+			if (result && result.length > 1) {
 				level = result[1].length;
 			}
 		}

@@ -96,7 +96,7 @@ func (sv *Server) Listen(ip string, port string, debug bool) {
 		root := "./ui/build"
 
 		if file == "" || ext == "" {
-			ctx.File(root + "/index.html")
+			ctx.File(path.Join(root, dir, "/index.html"))
 		} else {
 			ctx.File(path.Join(root, dir, file))
 		}

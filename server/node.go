@@ -44,7 +44,7 @@ func (sv *Server) putNode(c *gin.Context) {
 	id := c.Param("id")
 
 	type Request struct {
-		Content string `json:"content" binding:"required"`
+		Content string `json:"content"`
 	}
 
 	var req Request
